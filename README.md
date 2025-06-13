@@ -1,4 +1,4 @@
-## Laravel Absensi
+# OXXO Laundry
 
 ### .:: Sebuah kebanggaan keluarga - pria punya selera ::.
 
@@ -10,7 +10,7 @@
 ### Instalasi
 - Jalankan
 ```
-    git clone https://github.com/noerfariss/absensi.git
+    git clone https://github.com/noerfariss/oxxo.git
 ```
 
 - Copy .env.example menjadi .env, dan sesuaikan databasenya
@@ -26,10 +26,6 @@
     php artisan migrate
     php artisan db:seed
 ```
-
-- Oiaa karena ada fungsi Geocode Reverse alias mengubah koordinat (latitude & longitude) menjadi alamat, saya di sini menggunakan dari MapBox bukan Google maps.. alasan dipilih murahnya bukan kualitasnya ;(
-
-- Silahkan sesuaikan di bagian .env pada key MAPBOX_TOKEN, isikan dengan token yang sudah didapat dari MapBox
 
 #
 #
