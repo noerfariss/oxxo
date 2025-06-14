@@ -3,6 +3,7 @@
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
+use App\Http\Controllers\CashierController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\ProfilController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
+use Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('xss')->group(function () {
@@ -44,14 +46,10 @@ Route::middleware('xss')->group(function () {
             Route::post('/daily-attendance', [HomeController::class, 'dailyAttendance'])->name('chart.daily.attendance');
         });
 
-        Route::prefix('absensi')->group(function () {
-            Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-            Route::post('/attendance-ajax', [AttendanceController::class, 'ajax'])->name('attendance.ajax');
-            Route::get('/attendance/{attendance}/approved', [AttendanceController::class, 'approved'])->name('attendance.approved');
-            Route::get('/attendance/{attendance}/reject', [AttendanceController::class, 'reject'])->name('attendance.reject');
+        Route::prefix('cashier')->group(function () {
+            Route::get('/', [CashierController::class, 'index'])->name('cashier.index');
+        })->middleware([HandlePrecognitiveRequests::class]);
 
-            Route::get('/report', [AttendanceReportController::class, 'index'])->name('attendance.report');
-        });
 
         Route::prefix('members')->group(function () {
             Route::resource('member', MemberController::class);

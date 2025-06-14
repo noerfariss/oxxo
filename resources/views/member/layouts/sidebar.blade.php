@@ -21,8 +21,8 @@
         </li>
 
         @can('CASHIER_READ')
-            <li class="menu-item {{ menuAktif(['auth.index']) }}">
-                <a href="{{ route('auth.index') }}" target="_blank" class="menu-link">
+            <li class="menu-item {{ menuAktif(['cashier.index']) }}">
+                <a href="{{ route('cashier.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-cable-car"></i>
                     <div data-i18n="Analytics">Kasir</div>
                 </a>
