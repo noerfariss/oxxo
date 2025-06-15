@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Office;
 use App\Models\OutletKios;
+use App\Models\Product;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
@@ -14,7 +15,11 @@ class OutletKiosSeeder extends Seeder
      */
     public function run(): void
     {
-        OutletKios::create([
+        // all products
+        $products = Product::all();
+
+
+        $kios1 = OutletKios::create([
             'office_id' => Office::first()->id,
             'name' => 'Oxxo Kios Pakuwon Mall Surabaya',
             'address' => 'Jl. Mayjend. Jonosewojo No.2, Babatan, Kec. Wiyung, Surabaya, Jawa Timur 60227',
@@ -22,6 +27,8 @@ class OutletKiosSeeder extends Seeder
             'latitude' => '-7.2891006580566575',
             'longitude' => '112.67575085963747',
         ]);
+
+
 
         OutletKios::create([
             'name' => 'Oxxo Kios Grand City Mall Surabaya',

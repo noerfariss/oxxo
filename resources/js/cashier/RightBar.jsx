@@ -3,7 +3,7 @@ import React from 'react'
 import { Colors } from '../utils/Colors'
 import { CalendarOutlined, PercentageOutlined, RightCircleTwoTone, TagsTwoTone, UserOutlined } from '@ant-design/icons'
 
-export const RightBar = ({ cartItems, total }) => {
+export const RightBar = () => {
     return (
         <div style={{ height: '100vh', backgroundColor: Colors.primary, paddingRight: 22, paddingLeft: 22, paddingTop: 14, paddingBottom: 14, display: 'flex', flexDirection: 'column' }}>
             <section style={{ textAlign: 'right' }}>

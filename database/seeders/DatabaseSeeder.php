@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             SettingSeeder::class,
             // CalendarSeeder::class,
             CategorySeeder::class,
+            ProductAttributeSeeder::class,
             ProductSeeder::class,
             OfficeSeeder::class,
             OutletKiosSeeder::class,

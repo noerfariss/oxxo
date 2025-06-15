@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Product;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -25,15 +26,32 @@ class ProductSeeder extends Seeder
 
         DB::beginTransaction();
         try {
+            $appareal = Category::where('name', 'APPAREL')->first()->id;
             foreach ($rows as $index => $row) {
                 if ($index === 0) continue; // skip header
 
                 $name = $row[0] ?? null;
+                $priceDC = $row[1];
+                $pricePO = $row[2];
 
                 if ($name && trim($name) !== '') {
-                    Product::create([
+                    $product = Product::create([
                         'name' => $name,
-                        'category_id' => Category::where('name', 'APPAREL')->first()->id,
+                        'category_id' => $appareal,
+                    ]);
+
+                    DB::table('product_price')->insert([
+                        'product_id' => $product->id,
+                        'product_attribute_id' => 1,
+                        'price' => $priceDC,
+                        'created_at' => Carbon::now()
+                    ]);
+
+                    DB::table('product_price')->insert([
+                        'product_id' => $product->id,
+                        'product_attribute_id' => 2,
+                        'price' => $pricePO,
+                        'created_at' => Carbon::now()
                     ]);
                 }
             }
@@ -57,11 +75,19 @@ class ProductSeeder extends Seeder
                 if ($index === 0) continue; // skip header
 
                 $name = $row[0] ?? null;
+                $priceDC = $row[1];
 
                 if ($name && trim($name) !== '') {
-                    Product::create([
+                    $product = Product::create([
                         'name' => $name,
                         'category_id' => Category::where('name', 'KIDS APPAREL')->first()->id,
+                    ]);
+
+                    DB::table('product_price')->insert([
+                        'product_id' => $product->id,
+                        'product_attribute_id' => 1,
+                        'price' => $priceDC,
+                        'created_at' => Carbon::now()
                     ]);
                 }
             }
@@ -85,11 +111,19 @@ class ProductSeeder extends Seeder
                 if ($index === 0) continue; // skip header
 
                 $name = $row[0] ?? null;
+                $priceDC = $row[1];
 
                 if ($name && trim($name) !== '') {
-                    Product::create([
+                    $product = Product::create([
                         'name' => $name,
                         'category_id' => Category::where('name', 'LINEN')->first()->id,
+                    ]);
+
+                    DB::table('product_price')->insert([
+                        'product_id' => $product->id,
+                        'product_attribute_id' => 1,
+                        'price' => $priceDC,
+                        'created_at' => Carbon::now()
                     ]);
                 }
             }
@@ -113,11 +147,19 @@ class ProductSeeder extends Seeder
                 if ($index === 0) continue; // skip header
 
                 $name = $row[0] ?? null;
+                $priceDC = $row[1];
 
                 if ($name && trim($name) !== '') {
-                    Product::create([
+                    $product = Product::create([
                         'name' => $name,
                         'category_id' => Category::where('name', 'OTHERS')->first()->id,
+                    ]);
+
+                    DB::table('product_price')->insert([
+                        'product_id' => $product->id,
+                        'product_attribute_id' => 1,
+                        'price' => $priceDC,
+                        'created_at' => Carbon::now()
                     ]);
                 }
             }

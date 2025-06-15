@@ -48,6 +48,10 @@ Route::middleware('xss')->group(function () {
 
         Route::prefix('cashier')->group(function () {
             Route::get('/', [CashierController::class, 'index'])->name('cashier.index');
+            Route::post('/cashier-ajax', [CashierController::class, 'ajax'])->name('cashier.ajax');
+            Route::get('/kios/{kios}', [CashierController::class, 'cashier'])->name('cashier.kios');
+            Route::post('/items', [CashierController::class, 'items'])->name('cashier.items');
+            Route::get('/categories', [CashierController::class, 'categories'])->name('cashier.categories');
         })->middleware([HandlePrecognitiveRequests::class]);
 
 

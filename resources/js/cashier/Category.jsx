@@ -3,13 +3,7 @@ import { Col, Input, Row } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { Colors } from '../utils/Colors'
 
-export default function Category() {
-    const [datas, setDatas] = useState([]);
-
-    useEffect(() => {
-        setDatas(['APPAREL', 'KIDS APPAREL', 'LINEN', 'OTHERS']);
-    }, []);
-
+export default function Category({ datas }) {
     return (
         <Row gutter={12} align={'middle'} style={{ marginBottom: 12 }}>
             <Col xs={24} sm={9}>
@@ -34,7 +28,7 @@ export default function Category() {
                                     cursor: 'pointer',
                                     flexShrink: 0, // <- penting juga!
                                 }}>
-                                    <TagsTwoTone /> {val}
+                                    <TagsTwoTone /> {val.name}
                                 </button>
                             ))
                         }

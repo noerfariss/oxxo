@@ -24,7 +24,7 @@ export default function Header() {
 
     const handleToDashboard = () => {
         const baseUrl = import.meta.env.VITE_APP_URL;
-        window.location.href = baseUrl;
+        window.location.href = baseUrl+'/auth/cashier';
     }
 
 
