@@ -42,7 +42,9 @@ class ProductController extends Controller implements HasMiddleware
 
         $data = Product::query()
             ->with([
-                'category:id,name'
+                'category:id,name',
+                'prices',
+                'prices.attribute'
             ])
             ->when($cari, function ($e, $cari) {
                 $e->where('name', 'like', "%{$cari}%");
@@ -50,6 +52,11 @@ class ProductController extends Controller implements HasMiddleware
             ->where('status', cekStatus($request->status));
 
         return DataTables::eloquent($data)
+            ->addColumn('pricestring', function ($e) {
+                return $e->prices
+                    ->map(fn($p) => optional($p->attribute)->name . ': ' . number_format($p->price, 0, ',', '.'))
+                    ->implode(', ');
+            })
             ->addColumn('aksi', function ($e) {
                 $product = User::find(Auth::id());
 

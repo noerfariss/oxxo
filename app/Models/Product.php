@@ -25,6 +25,11 @@ class Product extends Model
         return $this->belongsTo(Category::class);
     }
 
+    public function prices()
+    {
+        return $this->hasMany(ProductPrice::class);
+    }
+
     protected function createdAt(): Attribute
     {
         return Attribute::make(

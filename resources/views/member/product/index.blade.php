@@ -33,6 +33,7 @@
                     <tr>
                         <th>kategori</th>
                         <th>nama</th>
+                        <th>harga</th>
                         <th>status</th>
                         <th>dibuat</th>
                         <th></th>
@@ -60,8 +61,8 @@
             bDestroy: true,
             info: false,
             responsive: true,
-            order:[
-                [3, 'desc']
+            order: [
+                [4, 'desc']
             ],
             ajax: {
                 url: "{{ route('product.ajax') }}",
@@ -77,20 +78,24 @@
                     targets: 0
                 },
                 {
-                    width: "40%",
+                    width: "30%",
                     targets: 1
                 },
                 {
-                    width: "10%",
+                    width: "30%",
                     targets: 2
                 },
                 {
-                    width: "20%",
+                    width: "10%",
                     targets: 3
                 },
                 {
+                    width: "20%",
+                    targets: 4
+                },
+                {
                     width: "10%",
-                    targets: 3
+                    targets: 5
                 },
             ],
             columns: [{
@@ -98,8 +103,12 @@
                     render: function(data, type, row) {
                         return row.category.name;
                     }
-                }, {
+                },
+                {
                     data: 'name',
+                },
+                {
+                    data: 'pricestring'
                 },
                 {
                     data: 'statusstring'
