@@ -6,13 +6,18 @@ import { RightBar } from './RightBar';
 import Items from './Items';
 import { Colors } from '../utils/Colors';
 import axios from 'axios';
+import { getSlug } from '../utils/Helper';
 
 export default function Cashier() {
+    const slug = getSlug();
     const baseUrl = import.meta.env.VITE_APP_URL;
     const [search, setSearch] = useState('');
+    const [searchCategory, setSearchCategory] = useState('');
 
     const [items, setItems] = useState([]);
     const [categories, setCategories] = useState([]);
+
+    const [cart, setCart] = useState([]);
 
     const getCategories = async () => {
         try {
@@ -37,7 +42,9 @@ export default function Cashier() {
     const getItems = async () => {
         try {
             const req = await axios.post(`${baseUrl}/auth/cashier/items`, {
-                search: search
+                search: search,
+                category: searchCategory,
+                slug: slug
             }, {
                 headers: {
                     'Accept': 'application/json',
@@ -55,10 +62,35 @@ export default function Cashier() {
         }
     }
 
+    const handleAddToCart = (newItem) => {
+        setCart(prev => {
+            const exist = prev.find(item =>
+                item.id === newItem.id && item.attribute === newItem.attribute
+            );
+
+            if (exist) {
+                return prev.map(item =>
+                    item.id === newItem.id && item.attribute === newItem.attribute
+                        ? {
+                            ...item,
+                            quantity: item.quantity + 1,
+                            subtotal: item.price * (item.quantity + 1),
+                        }
+                        : item
+                );
+            } else {
+                return [...prev, newItem];
+            }
+        });
+    }
+
     useEffect(() => {
         getCategories();
-        getItems();
     }, [])
+
+    useEffect(() => {
+        getItems();
+    }, [search, searchCategory])
 
     return (
         <Layout style={{ minHeight: '100vh' }}>
@@ -67,17 +99,17 @@ export default function Cashier() {
                 <Col xs={24} md={16} xl={18} style={{ display: 'flex', flexDirection: 'column' }}>
                     <div style={{ backgroundColor: 'white', boxShadow: '0 7px 7px #ECEFF1', paddingBottom: 12, paddingLeft: 12, paddingRight: 12 }}>
                         <Header />
-                        <Category datas={categories} />
+                        <Category datas={categories} onChangeSearch={(e) => setSearch(e)} onChangeCategory={(e) => setSearchCategory(e)} searchCategory={searchCategory} />
                     </div>
                     <div style={{ paddingLeft: 12, paddingRight: 12, marginTop: 16, flex: 1 }}>
-                        <Items datas={items} />
+                        <Items datas={items} setAddToCart={(e) => handleAddToCart(e)} />
                     </div>
                     <div style={{ marginTop: 12, boxShadow: '0 0 7px #ECEFF1', backgroundColor: Colors.blue100, paddingLeft: 12, paddingRight: 12, paddingTop: 22, flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'start', justifyContent: 'space-between' }}>
 
                     </div>
                 </Col>
                 <Col xs={24} md={8} xl={6}>
-                    <RightBar />
+                    <RightBar cart={cart} />
                 </Col>
             </Row>
         </Layout>

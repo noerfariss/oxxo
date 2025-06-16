@@ -27,7 +27,7 @@
                     <div class="card">
                         <div class="card-header pb-0">
                             <h4 class="fw-semibold fs-5">{{ $cashier->name }}</h4>
-                            <h5 class="badge bg-primary">{{ $cashier->office->name }}</h5>
+                            <h5 class="badge bg-primary">{{ $cashier->office ? $cashier->office->name : '' }}</h5>
                         </div>
                         <div class="card-body py-0">
                             {{ $cashier->address }}

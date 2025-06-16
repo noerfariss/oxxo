@@ -15,6 +15,7 @@ return new class extends Migration
             $table->foreignId('kios_id')->constrained('outlet_kios')->onDelete('cascade');
             $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
             $table->foreignId('product_attribute_id')->constrained('product_attributes')->onDelete('cascade');
+            $table->unsignedInteger('price')->default(0);
             $table->timestamps();
         });
     }

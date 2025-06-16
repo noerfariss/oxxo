@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
 
 class CashierController extends Controller implements HasMiddleware
@@ -43,14 +44,52 @@ class CashierController extends Controller implements HasMiddleware
     {
         $category = $request->category;
         $search = $request->search;
+        $slug = $request->slug;
 
-        $data = Product::query()
-            ->with([
-                'category:id,name'
-            ])
+        $kios = OutletKios::where('uuid', $slug)->first();
+        if (!$kios) {
+            return ResponseClass::error('Data tidak ditemukan', statusCode: 404);
+        }
+
+        $data = DB::table('products as a')
+            ->join('categories as b', 'b.id', '=', 'a.category_id')
+            ->join('product_price as c', 'c.product_id', '=', 'a.id')
+            ->join('product_attributes as d', 'd.id', '=', 'c.product_attribute_id')
+            ->leftJoin('outlet_kios_product as e', function ($join) use ($kios) {
+                $join->on('e.product_id', '=', 'a.id')
+                    ->on('e.product_attribute_id', '=', 'c.product_attribute_id')
+                    ->where('e.kios_id', '=', $kios->id);
+            })
+            ->when($category, fn($e) => $e->where('b.id', $category))
+            ->when($search, fn($e) => $e->where('a.name', 'like', "%{$search}%"))
+            ->select(
+                'a.id',
+                'b.name as category',
+                'a.name',
+                'd.name as attribute',
+                'c.price as master_price',
+                DB::raw('COALESCE(e.price, c.price) as price')
+            )
             ->get();
 
-        return ResponseClass::success(data: $data);
+        $collection = collect($data)->groupBy('id')->map(function ($data, $id) {
+            $first = $data->first();
+
+            return [
+                'id' => $id,
+                'category' => $first->category,
+                'name' => $first->name,
+                'attribute' => $data->map(function ($attribute) {
+                    return [
+                        'name' => $attribute->attribute,
+                        'master_price' => $attribute->master_price,
+                        'price' => $attribute->price,
+                    ];
+                })->values()->toArray(),
+            ];
+        })->values()->toArray();
+
+        return ResponseClass::success(data: $collection);
     }
 
     public function categories()
