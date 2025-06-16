@@ -2,13 +2,43 @@ import { Button, Card, Col, List } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { Colors } from '../utils/Colors'
 import { CalendarOutlined, PercentageOutlined, RightCircleTwoTone, TagsTwoTone, UserOutlined } from '@ant-design/icons'
+import axios from 'axios'
+import { getSlug } from '../utils/Helper'
 
 export const RightBar = ({ cart = [] }) => {
+    const baseUrl = import.meta.env.VITE_APP_URL;
+    const slug = getSlug();
+
     const [total, setTotal] = useState(0);
 
     const totalPrice = cart.reduce((total, item) => {
         return total + (item.price * item.quantity);
     }, 0);
+
+    const handleProcess = async () => {
+        try {
+            const req = await axios.post(`${baseUrl}/auth/cashier/process`, {
+                cart: cart,
+                slug: slug
+
+            }, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const res = await req.data;
+            const data = res.data;
+            console.log(data);
+
+
+        } catch (error) {
+            console.log(error);
+
+        }
+
+    }
 
     useEffect(() => {
         setTotal(totalPrice);
@@ -70,14 +100,17 @@ export const RightBar = ({ cart = [] }) => {
 
                 <button
                     type="button"
+                    onClick={handleProcess}
+                    disabled={total > 0 ? false : true}
                     style={{
-                        backgroundColor: Colors.yellow,
+                        backgroundColor: total > 0 ? Colors.yellow : Colors.blue100,
+                        color: total > 0 ? Colors.black : Colors.gray500,
                         border: 0,
                         width: '100%',
                         padding: 12,
                         borderRadius: 8,
                         marginBottom: 24,
-                        cursor: 'pointer'
+                        cursor: total > 0 ? 'pointer' : 'disabled',
                     }}
                 >
                     Proses

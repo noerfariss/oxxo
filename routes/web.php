@@ -52,6 +52,7 @@ Route::middleware('xss')->group(function () {
             Route::get('/kios/{kios}', [CashierController::class, 'cashier'])->name('cashier.kios');
             Route::post('/items', [CashierController::class, 'items'])->name('cashier.items');
             Route::get('/categories', [CashierController::class, 'categories'])->name('cashier.categories');
+            Route::post('/process', [CashierController::class, 'save'])->name('cashier.process');
         })->middleware([HandlePrecognitiveRequests::class]);
 
 

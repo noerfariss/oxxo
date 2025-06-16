@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Class\ResponseClass;
 use App\Models\Category;
+use App\Models\Order;
 use App\Models\OutletKios;
 use App\Models\Product;
 use App\Models\User;
@@ -98,5 +99,32 @@ class CashierController extends Controller implements HasMiddleware
             ->get();
 
         return ResponseClass::success(data: $data);
+    }
+
+    public function save(Request $request)
+    {
+        $slug = $request->slug;
+        $cart = $request->cart;
+        $kios = OutletKios::where('uuid', $slug)->first();
+
+        $productId = collect($cart)->pluck('id')->toArray();
+
+        DB::beginTransaction();
+        try {
+            Order::create([
+                'kios_id' => $kios->id,
+                'kiostext' => $kios,
+                'product_id' => $productId,
+                'products' => $cart,
+            ]);
+
+            DB::commit();
+
+            return ResponseClass::success();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            info($th->getMessage());
+            return ResponseClass::error();
+        }
     }
 }

@@ -74,9 +74,9 @@ const Items = ({ datas = [], setAddToCart = {} }) => {
     }
 
     useEffect(() => {
-        setBtnDisabled(!(selectedItem.noted && selectedItem.price));
+        setBtnDisabled(!(selectedItem.price));
 
-    }, [selectedItem.noted, selectedItem.price]);
+    }, [selectedItem.price]);
 
 
     return (
