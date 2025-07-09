@@ -235,7 +235,7 @@ $(document).ready(function () {
 
     // --- biasa
     $('.office-select').select2({
-        placeholder: " - Kantor -",
+        placeholder: " - Outlet -",
         allowClear: true,
         ajax: {
             type: 'POST',

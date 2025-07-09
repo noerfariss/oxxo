@@ -31,14 +31,14 @@
                             @csrf
                             @method('PATCH')
 
-                            <div class="row mb-2">
+                            <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Cust. ID</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" disabled value="{{ $member->numberid }}">
                                 </div>
                             </div>
 
-                            <div class="row mb-2">
+                            <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Outlet</label>
                                 <div class="col-sm-9">
                                     <select name="office_id" id="office_id" class="form-control office-select"
@@ -52,28 +52,28 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-2">
+                            <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Nama</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" name="name" value="{{ $member->name }}">
                                 </div>
                             </div>
 
-                            <div class="row mb-2">
+                            <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">whatsapp</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" name="phone" value="{{ $member->phone }}">
                                 </div>
                             </div>
 
-                            <div class="row mb-2">
+                            <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">tanggal lahir</label>
                                 <div class="col-sm-9">
                                     <input type="date" class="form-control" name="born" value="{{ $member->born }}">
                                 </div>
                             </div>
 
-                            <div class="row mb-2">
+                            <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">Alamat</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" name="address"
@@ -81,7 +81,7 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-2">
+                            <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">kota</label>
                                 <div class="col-sm-9">
                                     <select name="city_id" id="city_id" class="form-control city-select"
@@ -95,7 +95,7 @@
                             </div>
 
 
-                            <div class="mb-2 row">
+                            <div class="mb-3 row">
                                 <label for="gender" class="col-form-label col-sm-3">jenis kelamin</label>
                                 <div class="col-sm-9">
                                     <div class="form-check">
@@ -115,7 +115,7 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-2">
+                            <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">member</label>
                                 <div class="col-sm-9">
                                     <div class="form-check form-switch mt-2">
@@ -126,7 +126,7 @@
                                 </div>
                             </div>
 
-                            <div class="row mb-2">
+                            <div class="row mb-3">
                                 <label class="col-sm-3 col-form-label">status</label>
                                 <div class="col-sm-9">
                                     <div class="form-check form-switch mt-2">

@@ -5,6 +5,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\CashierController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\DepositController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MemberController;
@@ -61,6 +62,10 @@ Route::middleware('xss')->group(function () {
             // Route::post('/member/password/{member}', [MemberController::class, 'password'])->name('member.password');
             // Route::post('/import', [MemberTemplateController::class, 'import'])->name('member.import');
             // Route::get('/template', [MemberTemplateController::class, 'template'])->name('member.template');
+
+            Route::get('/deposit/{member}/member', [DepositController::class, 'index'])->name('deposit.index');
+            Route::post('/deposit-ajax', [DepositController::class, 'ajax'])->name('deposit.ajax');
+            Route::post('/deposit', [DepositController::class, 'store'])->name('deposit.store');
         });
 
         Route::prefix('officesmaster')->group(function () {

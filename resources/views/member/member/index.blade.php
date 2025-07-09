@@ -4,7 +4,7 @@
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="card mb-4">
             <h5 class="card-header">customer
-                {!! statusBtn() !!}t
+                {!! statusBtn() !!}
             </h5>
 
             <div class="card-body">
@@ -149,7 +149,7 @@
         $('#datatable tbody').on('click', 'tr td:not(:last-child)', function() {
             const data = datatables.row(this).data();
             $('#modalDetailTable').modal('show');
-            $('#modalDetailTableLabel').text('Member');
+            $('#modalDetailTableLabel').text('Customer');
 
             console.log(data);
 

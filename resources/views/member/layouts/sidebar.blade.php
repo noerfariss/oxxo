@@ -29,25 +29,22 @@
             </li>
         @endcan
 
-        @canany(['MEMBER_READ'])
-            <li class="menu-header small text-uppercase"><span class="menu-header-text">Data Member</span></li>
-        @endcanany
-
-        @can('MEMBER_READ')
-            <li class="menu-item {{ menuAktif([]) }}">
-                <a href="{{ route('member.index') }}" class="menu-link">
-                    <i class="menu-icon tf-icons bx bx-user"></i>
-                    <div data-i18n="Analytics">Customer</div>
-                </a>
-            </li>
-        @endcan
-
 
         @canany(['OUTLETKIOS_READ', 'OFFICE_READ', 'PRODUCT_READ', 'CATEGORY_READ'])
             <li class="menu-header small text-uppercase"><span class="menu-header-text">Master</span></li>
         @endcanany
 
         @canany(['OUTLETKIOS_READ', 'OFFICE_READ'])
+
+            @can('MEMBER_READ')
+                <li class="menu-item {{ menuAktif(['member.index', 'member.edit', 'member.create', 'deposit.index']) }}">
+                    <a href="{{ route('member.index') }}" class="menu-link">
+                        <i class="menu-icon tf-icons bx bx-user"></i>
+                        <div data-i18n="Analytics">Customer</div>
+                    </a>
+                </li>
+            @endcan
+
             <li
                 class="menu-item {{ menuAktif(['office.index', 'office.create', 'office.edit', 'office.outletkios', 'kios.index', 'kios.create', 'kios.edit']) }}">
                 <a href="#" class="menu-link menu-toggle">
