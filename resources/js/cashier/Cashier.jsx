@@ -109,7 +109,7 @@ export default function Cashier() {
                     </div>
                 </Col>
                 <Col xs={24} md={8} xl={6}>
-                    <RightBar cart={cart} />
+                    <RightBar cart={cart} setCart={(e) => setCart(e)} />
                 </Col>
             </Row>
         </Layout>

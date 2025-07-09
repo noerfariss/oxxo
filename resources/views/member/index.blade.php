@@ -12,44 +12,7 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-sm-2 mb-4">
-                <div class="card mb-3">
-                    <div class="px-3 py-1">
-                        <h6 class="col-form-label">pegawai</h6>
-                        <h2 class="fw-bold" id="ts-members">0</h2>
-                    </div>
-                </div>
 
-                <div class="card mb-3">
-                    <div class="px-3 py-1">
-                        <h6 class="col-form-label">kantor</h6>
-                        <h2 class="fw-bold" id="ts-offices">0</h2>
-                    </div>
-                </div>
-
-                <div class="card mb-3">
-                    <div class="px-3 py-1">
-                        <h6 class="col-form-label">divisi</h6>
-                        <h2 class="fw-bold" id="ts-divisions">0</h2>
-                    </div>
-                </div>
-
-
-            </div>
-            <div class="col-sm-10 mb-4">
-                <div class="card">
-                    <h5 class="card-header col-form-label"></h5>
-                    <section id="boxDailyAttendance" class="text-center"></section>
-                </div>
-            </div>
-        </div>
-
-        <div class="row">
-
-
-
-        </div>
     </div>
 @endsection
 

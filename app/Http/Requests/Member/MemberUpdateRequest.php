@@ -24,14 +24,12 @@ class MemberUpdateRequest extends FormRequest
     {
         return [
             'office_id' => ['required'],
-            'division_id' => ['required'],
-            'position_id' => ['required'],
-            'nik' => ['required', Rule::unique('members')->ignore($this->member)],
-            'email' => ['required', 'email', Rule::unique('members')->ignore($this->member)],
             'name' => ['required'],
             'phone' => ['required', 'numeric', Rule::unique('members')->ignore($this->member)],
+            'born' => ['required', 'date'],
+            'address' => ['required', 'min:3'],
+            'city_id' => ['nullable'],
             'gender' => ['required'],
-            'status' => ['nullable']
         ];
     }
 
@@ -39,6 +37,7 @@ class MemberUpdateRequest extends FormRequest
     {
         $this->merge([
             'status' => $this->status ? true : false,
+            'is_member' => $this->is_member ? true : false,
         ]);
     }
 
@@ -48,9 +47,8 @@ class MemberUpdateRequest extends FormRequest
             'name' => 'Nama',
             'phone' => 'Whatsapp',
             'gender' => 'Jenis kelamin',
-            'office_id' => 'Kantor',
-            'division_id' => 'Divisi',
-            'position_id' => 'Jabatan'
+            'office_id' => 'Outlet',
+            'address' => 'Alamat'
         ];
     }
 }

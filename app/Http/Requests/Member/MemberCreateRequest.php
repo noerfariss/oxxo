@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Member;
 
+use App\Class\MemberClass;
 use App\Trait\GlobalTrait;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Hash;
@@ -28,12 +29,11 @@ class MemberCreateRequest extends FormRequest
     {
         return [
             'office_id' => ['required'],
-            'division_id' => ['required'],
-            'position_id' => ['required'],
-            'nik' => ['nullable', Rule::unique('members', 'nik')],
-            'email' => ['required', 'email', Rule::unique('members', 'email')],
             'name' => ['required'],
             'phone' => ['required', 'numeric', Rule::unique('members', 'phone')],
+            'born' => ['required', 'date'],
+            'address' => ['required', 'min:3'],
+            'city_id' => ['nullable'],
             'gender' => ['required'],
         ];
     }
@@ -42,6 +42,8 @@ class MemberCreateRequest extends FormRequest
     {
         $this->merge([
             'password' => Hash::make('123456'),
+            'numberid' => MemberClass::generateNumber(),
+            'is_member' => $this->is_member ? true : false,
         ]);
     }
 
@@ -49,17 +51,10 @@ class MemberCreateRequest extends FormRequest
     {
         return [
             'name' => 'Nama',
+            'phone' => 'Whatsapp',
             'gender' => 'Jenis kelamin',
-            'office_id' => 'Kantor',
-            'division_id' => 'Divisi',
-            'position_id' => 'Jabatan'
+            'office_id' => 'Outlet',
+            'address' => 'Alamat'
         ];
-    }
-
-    protected function passedValidation()
-    {
-        $this->merge([
-            'nik' => $this->nik ? $this->nik : $this->GenerateNumberMember(),
-        ]);
     }
 }

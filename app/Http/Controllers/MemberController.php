@@ -43,18 +43,12 @@ class MemberController extends Controller implements HasMiddleware
     {
         $cari = $request->cari;
         $office = $request->office;
-        $division = $request->division;
-        $position = $request->position;
 
         $data = Member::query()
-            ->with(['office', 'division', 'position'])
-            ->when($office, fn($e) => $e->where('office_id', $office))
-            ->when($division, fn($e) => $e->where('division_id', $division))
-            ->when($position, fn($e) => $e->where('position_id', $position))
             ->when($cari, function ($e, $cari) {
                 $e->where(function ($e) use ($cari) {
                     $e->where('name', 'like', '%' . $cari . '%')
-                        ->orWhere('nik', 'like', '%' . $cari . '%');
+                        ->orWhere('numberid', 'like', '%' . $cari . '%');
                 });
             })
             ->where('status', cekStatus($request->status));
@@ -63,38 +57,32 @@ class MemberController extends Controller implements HasMiddleware
             ->addColumn('aksi', function ($e) {
                 $member = User::find(Auth::id());
 
-                $btnEdit = $member->hasPermissionTo('MEMBER_EDIT')
-                    ? ($e->status == true ? '<li><a href="' . route('member.edit', ['member' => $e]) . '" class="dropdown-item"><i class="bx bx-pencil"></i> Edit</a></li>' : '')
+                $btnEdit = $member->hasPermissionTo('MEMBER_EDIT') && $e->status == true
+                    ? '<a href="' . route('member.edit', ['member' => $e]) . '" class="action-btn text-dark d-flex align-items-center border rounded btn-sm "><i class="bx bx-pencil"></i> Edit</a>'
                     : '';
 
-                $btnPassword = $member->hasPermissionTo('MEMBER_EDIT')
-                    ? ($e->status == true ? '<li><a href="' . route('member.edit', ['member' => $e, 'password' => true]) . '" class="dropdown-item"><i class="bx bx-dialpad-alt"></i> Ganti Password</a></li>' : '')
+                $btnPassword = $member->hasPermissionTo('MEMBER_EDIT') && $e->status == true
+                    ? '<a href="' . route('member.edit', ['member' => $e, 'password' => true]) . '" class="action-btn d-flex align-items-center text-dark border rounded btn-sm"><i class="bx bx-dialpad-alt"></i> Password</a>'
                     : '';
 
-
-                $btnDelete = $member->hasPermissionTo('MEMBER_DELETE')
-                    ? ($e->status == true ? '<li><a href="' . route('member.destroy', ['member' => $e]) . '" data-title="' . $e->name . '" class="dropdown-item btn-hapus"><i class="bx bx-trash"></i> Delete</a></li>' : '')
+                $btnDelete = $member->hasPermissionTo('MEMBER_DELETE') && $e->status == true
+                    ? '<a href="' . route('member.destroy', ['member' => $e]) . '" data-title="' . $e->name . '" class="action-btn d-flex align-items-center text-danger border rounded btn-sm btn-hapus"><i class="bx bx-trash"></i> Hapus</a>'
                     : '';
 
-                $btnReload = $member->hasPermissionTo('MEMBER_EDIT')
-                    ? ($e->status == false ?  '<li><a href="' . route('member.destroy', ['member' => $e]) . '" data-title="' . $e->name . '" data-status="' . $e->status . '" class="dropdown-item btn-hapus"><i class="bx bx-refresh"></i></i> reset</a></li>' : '')
+                $btnReload = $member->hasPermissionTo('MEMBER_EDIT') && $e->status == false
+                    ? '<a href="' . route('member.destroy', ['member' => $e]) . '" data-title="' . $e->name . '" data-status="' . $e->status . '" class="action-btn border rounded btn-sm text-dark btn-hapus"><i class="bx bx-refresh"></i> Reset</a>'
                     : '';
 
-                return '<div class="btn-group float-end" role="group" aria-label="Button group with nested dropdown">
-                            <div class="btn-group" role="group">
-                                <button id="btnGroupDrop1" type="button" class="badge border text-dark dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                                    setting
-                                </button>
-                                <ul class="dropdown-menu dropdown-menu-right" aria-labelledby="btnGroupDrop1">
-                                    ' . $btnEdit . '
-                                    ' . $btnPassword . '
-                                    ' . $btnDelete . '
-                                    ' . $btnReload . '
-                                </ul>
-                            </div>
-                        </div>';
+                return '
+                    <div class="d-flex flex-wrap justify-content-end gap-2">
+                        ' . $btnEdit . '
+
+                        ' . $btnDelete . '
+                        ' . $btnReload . '
+                    </div>
+                ';
             })
-            ->rawColumns(['aksi', 'statusstring'])
+            ->rawColumns(['aksi', 'statusstring', 'memberstring'])
             ->make(true);
     }
 
@@ -113,14 +101,13 @@ class MemberController extends Controller implements HasMiddleware
     {
         DB::beginTransaction();
         try {
-            $member = Member::create($request->only(['office_id', 'division_id', 'position_id', 'nik', 'name', 'email', 'phone', 'gender', 'password']));
+            $member = Member::create($request->only(['office_id', 'numberid', 'name', 'phone', 'address', 'born', 'city_id', 'gender', 'password', 'is_member']));
 
             LogClass::set('Created member: ' . $request->name);
 
             DB::commit();
 
-            // return redirect()->back()->with('pesan', '<div class="alert alert-success">Data berhasil ditambahkan</div>');
-            return redirect()->route('member.edit', ['member' => $member->uuid])->with('pesan', '<div class="alert alert-success">Data berhasil ditambahkan, gunakan password bawaan <b>123456</b> untuk login ke aplikasi</div>');
+            return redirect()->route('member.edit', ['member' => $member])->with('pesan', '<div class="alert alert-success">Data berhasil ditambahkan</div>');
         } catch (\Throwable $th) {
             DB::rollBack();
             Log::warning($th->getMessage());
@@ -153,9 +140,10 @@ class MemberController extends Controller implements HasMiddleware
      */
     public function update(MemberUpdateRequest $request, Member $member)
     {
+        // dd($request->all());
         DB::beginTransaction();
         try {
-            $member->update($request->only(['office_id', 'division_id', 'position_id', 'nik', 'name', 'email', 'phone', 'gender', 'salary', 'status']));
+            $member->update($request->only(['office_id', 'numberid', 'name', 'phone', 'address', 'born', 'city_id', 'gender', 'is_member', 'status']));
             LogClass::set('Updated member: ' . $request->name);
 
             DB::commit();

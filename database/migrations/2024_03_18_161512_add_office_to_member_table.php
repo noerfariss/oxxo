@@ -11,12 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('positions', function (Blueprint $table) {
-            $table->id();
-            $table->uuid();
-            $table->string('name')->index();
-            $table->boolean('status')->default(true);
-            $table->timestamps();
+        Schema::table('members', function (Blueprint $table) {
+            $table->foreignId('office_id')->after('uuid')->nullable()->constrained('offices')->onDelete('cascade');
         });
     }
 
@@ -25,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('positions');
+        Schema::table('members', function (Blueprint $table) {
+            $table->dropConstrainedForeignId('office_id');
+        });
     }
 };

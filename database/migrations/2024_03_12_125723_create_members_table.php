@@ -14,13 +14,15 @@ return new class extends Migration
         Schema::create('members', function (Blueprint $table) {
             $table->id();
             $table->uuid()->index();
-            $table->string('nik')->index()->nullable();
-            $table->string('email')->unique()->nullable();
-            $table->string('phone')->unique()->nullable();
+            $table->string('numberid')->index()->nullable();
             $table->string('name')->index();
+            $table->string('phone')->unique()->nullable();
+            $table->date('born')->nullable();
+            $table->string('address')->nullable();
+            $table->foreignId('city_id')->nullable()->constrained('cities')->onDelete('cascade');
             $table->unsignedTinyInteger('gender')->default(0);
             $table->string('password');
-            $table->integer('salary')->default(0);
+            $table->boolean('is_member')->default(false);
             $table->string('remember_token')->nullable();
             $table->string('verified_number')->nullable();
             $table->timestamp('time_verified')->nullable();

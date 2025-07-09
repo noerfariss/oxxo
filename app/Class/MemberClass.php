@@ -44,4 +44,19 @@ class MemberClass
 
         return $data;
     }
+
+    public static function generateNumber()
+    {
+        // Ambil tanggal hari ini dalam format Ymd
+        $date = now()->format('Ymd');
+
+        // Ambil jumlah member yang didaftarkan hari ini
+        $count = Member::whereDate('created_at', now()->toDateString())->count() + 1;
+
+        // Format nomor urut dengan padding nol
+        $sequence = str_pad($count, 4, '0', STR_PAD_LEFT);
+
+        // Gabungkan kode
+        return "MBR{$date}-{$sequence}";
+    }
 }

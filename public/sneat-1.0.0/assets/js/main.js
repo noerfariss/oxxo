@@ -373,7 +373,7 @@ $(document).ready(function () {
         });
     });
 
-    $('.table').on('click', '.btn-hapus', function (e) {
+    $('.table, .modal').on('click', '.btn-hapus', function (e) {
         e.preventDefault();
         let url = $(this).attr('href');
         let title = $(this).data('title');

@@ -35,9 +35,9 @@
 
         @can('MEMBER_READ')
             <li class="menu-item {{ menuAktif([]) }}">
-                <a href="{{ route('office.index') }}" class="menu-link">
+                <a href="{{ route('member.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-user"></i>
-                    <div data-i18n="Analytics">Member</div>
+                    <div data-i18n="Analytics">Customer</div>
                 </a>
             </li>
         @endcan

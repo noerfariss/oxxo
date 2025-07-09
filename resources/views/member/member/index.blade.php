@@ -2,14 +2,9 @@
 
 @section('konten')
     <div class="container-xxl flex-grow-1 container-p-y">
-        <div class="row">
-            <div class="col-sm-12">
-                <x-member.top-navigation />
-            </div>
-        </div>
         <div class="card mb-4">
-            <h5 class="card-header">member
-                {!! statusBtn() !!}
+            <h5 class="card-header">customer
+                {!! statusBtn() !!}t
             </h5>
 
             <div class="card-body">
@@ -32,19 +27,11 @@
                         <input type="text" id="cari" class="form-control" placeholder="Cari...">
                     </div>
                     <div class="col-sm-1 mt-2">
-                        @include('member.layouts.globalFilter', [
-                            'division' => true,
-                            'office' => true,
-                            'position' => true,
-                        ])
+
                     </div>
                     <div class="col-sm-8 mt-2">
                         @haspermission('MEMBER_CREATE')
                             <div class="d-flex justify-content-end gap-3">
-                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="modalImport()">
-                                    <i class='bx bx-plus'></i> import
-                                </button>
-
                                 <a href="{{ route('member.create') }}" class="btn btn-sm btn-outline-primary ">
                                     <i class='bx bx-plus'></i> tambah
                                 </a>
@@ -57,14 +44,13 @@
             <table class="table table-hover display nowrap noscroll mb-4" id="datatable">
                 <thead>
                     <tr>
-                        <th>nik</th>
-                        <th>phone</th>
+                        <th>id</th>
                         <th>nama</th>
-                        <th>jabatan</th>
-                        <th>gender</th>
+                        <th>tanggal lahir</th>
+                        <th>alamat</th>
                         <th>status</th>
                         <th>dibuat</th>
-                        <th></th>
+
                     </tr>
                 </thead>
             </table>
@@ -74,7 +60,7 @@
     {{-- Modal import --}}
     <div class="modal fade" id="modalImport" tabindex="-1" aria-labelledby="modalImportLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
-            <form action="{{ route('member.import') }}" method="POST" enctype="multipart/form-data">
+            <form action="" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-content">
                     <div class="modal-header">
@@ -85,7 +71,7 @@
                         <input type="file" class="form-control" id="file" name="file">
                     </div>
                     <div class="modal-footer d-flex justify-content-between">
-                        <a href="{{ route('member.template') }}" class="btn btn-outline-danger btn-sm">
+                        <a href="" class="btn btn-outline-danger btn-sm">
                             Download template
                         </a>
                         <button type="submit" class="btn btn-primary btn-sm">Import</button>
@@ -116,7 +102,7 @@
             bDestroy: true,
             responsive: true,
             order: [
-                [6, 'desc']
+                [5, 'desc']
             ],
             ajax: {
                 url: "{{ route('member.ajax') }}",
@@ -131,27 +117,20 @@
                 },
             },
             columns: [{
-                    data: 'nik'
+                    data: 'numberid'
                 },
                 {
-                    data: 'phone'
-                },
-                {
-                    data: 'name',
-                    render: function(data, type, row) {
-                        return `<b>${data}</b>
-                                <div>${row.office_id ? row.office.name : ''} | ${row.division_id ? row.division.name : ''}</div>`
+                    data: 'namestring',
+                    name: 'name',
+                    render: function(data, type, row){
+                        return `${row.namestring} <br> ${row.memberstring}`;
                     }
                 },
                 {
-                    data: 'position_id',
-                    render: function(data, type, row) {
-                        return row.position.name;
-                    }
+                    data: 'born',
                 },
                 {
-                    data: 'genderstring',
-                    name: 'gender',
+                    data: 'address',
                 },
                 {
                     data: 'statusstring',
@@ -159,9 +138,6 @@
                 },
                 {
                     data: 'created_at'
-                },
-                {
-                    data: 'aksi'
                 },
             ]
         });
@@ -175,37 +151,38 @@
             $('#modalDetailTable').modal('show');
             $('#modalDetailTableLabel').text('Member');
 
-            const gender = getGender(data.gender);
+            console.log(data);
 
-            const dataTable = `
+
+            let dataTable = `
                 <table class="table table-sm table-hover">
                     <tbody>
                         <tr>
-                            <td class="col-form-label">nik</td>
+                            <td class="col-form-label">cust. ID</td>
                             <td>:</td>
-                            <td>${data.nik}</td>
-                        </tr>
-                        <tr>
-                            <td class="col-form-label">email</td>
-                            <td>:</td>
-                            <td>${data.email}</td>
-                        </tr>
-                        <tr>
-                            <td class="col-form-label">phone</td>
-                            <td>:</td>
-                            <td>${data.phone}</td>
+                            <td>${data.numberid}</td>
                         </tr>
                         <tr>
                             <td class="col-form-label">nama</td>
                             <td>:</td>
-                            <td>${data.name}</td>
+                            <td>${data.namestring}</td>
                         </tr>
                         <tr>
-                            <td class="col-form-label">gender</td>
+                            <td class="col-form-label">tanggal lahir</td>
                             <td>:</td>
-                            <td>${gender}</td>
+                            <td>${data.born}</td>
                         </tr>
                         <tr>
+                            <td class="col-form-label">alamat</td>
+                            <td>:</td>
+                            <td>${data.address}</td>
+                        </tr>
+                        <tr>
+                            <td class="col-form-label">Member</td>
+                            <td>:</td>
+                            <td>${data.memberstring}</td>
+                        </tr>
+                         <tr>
                             <td class="col-form-label">status</td>
                             <td>:</td>
                             <td>${data.statusstring}</td>
@@ -219,11 +196,9 @@
                 </table>
             `;
 
+            dataTable += data.aksi;
+
             $('#modalDetailTableBody').html(dataTable);
         });
-
-        function modalImport() {
-            $('#modalImport').modal('show');
-        }
     </script>
 @endpush

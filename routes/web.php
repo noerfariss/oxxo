@@ -55,13 +55,12 @@ Route::middleware('xss')->group(function () {
             Route::post('/process', [CashierController::class, 'save'])->name('cashier.process');
         })->middleware([HandlePrecognitiveRequests::class]);
 
-
         Route::prefix('members')->group(function () {
             Route::resource('member', MemberController::class);
             Route::post('/member-ajax', [MemberController::class, 'ajax'])->name('member.ajax');
-            Route::post('/member/password/{member}', [MemberController::class, 'password'])->name('member.password');
-            Route::post('/import', [MemberTemplateController::class, 'import'])->name('member.import');
-            Route::get('/template', [MemberTemplateController::class, 'template'])->name('member.template');
+            // Route::post('/member/password/{member}', [MemberController::class, 'password'])->name('member.password');
+            // Route::post('/import', [MemberTemplateController::class, 'import'])->name('member.import');
+            // Route::get('/template', [MemberTemplateController::class, 'template'])->name('member.template');
         });
 
         Route::prefix('officesmaster')->group(function () {

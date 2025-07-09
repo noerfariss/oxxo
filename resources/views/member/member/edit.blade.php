@@ -3,9 +3,14 @@
 @section('konten')
     <div class="container-xxl flex-grow-1 container-p-y">
         <div class="row">
+            <div class="col-sm-12">
+                <x-member.top-navigation :member="$member" />
+            </div>
+        </div>
+        <div class="row">
             <div class="col-md-6">
                 <div class="card mb-4">
-                    <h5 class="card-header">Edit pegawai</h5>
+                    <h5 class="card-header">Edit customer</h5>
                     <div class="card-body">
                         @if (session()->has('pesan'))
                             {!! session('pesan') !!}
@@ -27,41 +32,20 @@
                             @method('PATCH')
 
                             <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Kantor</label>
+                                <label class="col-sm-3 col-form-label">Cust. ID</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" disabled value="{{ $member->numberid }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Outlet</label>
                                 <div class="col-sm-9">
                                     <select name="office_id" id="office_id" class="form-control office-select"
                                         data-ajax--url="{{ route('drop-office') }}">
                                         @if ($member->office_id)
                                             <option value="{{ $member->office_id }}" selected>
                                                 {{ $member->office->name }}
-                                            </option>
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">divisi</label>
-                                <div class="col-sm-9">
-                                    <select name="division_id" id="division_id" class="form-control division-select"
-                                        data-ajax--url="{{ route('drop-division') }}">
-                                        @if ($member->division_id)
-                                            <option value="{{ $member->division_id }}" selected>
-                                                {{ $member->division->name }}
-                                            </option>
-                                        @endif
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">jabatan</label>
-                                <div class="col-sm-9">
-                                    <select name="position_id" id="position_id" class="form-control position-select"
-                                        data-ajax--url="{{ route('drop-position') }}">
-                                        @if ($member->position_id)
-                                            <option value="{{ $member->position_id }}" selected>
-                                                {{ $member->position->name }}
                                             </option>
                                         @endif
                                     </select>
@@ -76,25 +60,40 @@
                             </div>
 
                             <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">nik</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="nik" value="{{ $member->nik }}">
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">Email</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="email" value="{{ $member->email }}">
-                                </div>
-                            </div>
-
-                            <div class="row mb-3">
-                                <label class="col-sm-3 col-form-label">phone</label>
+                                <label class="col-sm-3 col-form-label">whatsapp</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" name="phone" value="{{ $member->phone }}">
                                 </div>
                             </div>
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">tanggal lahir</label>
+                                <div class="col-sm-9">
+                                    <input type="date" class="form-control" name="born" value="{{ $member->born }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">Alamat</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="address"
+                                        value="{{ $member->address }}">
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">kota</label>
+                                <div class="col-sm-9">
+                                    <select name="city_id" id="city_id" class="form-control city-select"
+                                        data-ajax--url="{{ route('drop-city') }}">
+                                        @if ($member->city_id)
+                                            <option value="{{ $member->city_id }}" selected>{{ $member->city->name }}
+                                            </option>
+                                        @endif
+                                    </select>
+                                </div>
+                            </div>
+
 
                             <div class="mb-3 row">
                                 <label for="gender" class="col-form-label col-sm-3">jenis kelamin</label>
@@ -112,6 +111,17 @@
                                         <label class="form-check-label" for="wanita">
                                             Perempuan
                                         </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label">member</label>
+                                <div class="col-sm-9">
+                                    <div class="form-check form-switch mt-2">
+                                        <input class="form-check-input btn-check" type="checkbox" role="switch"
+                                            id="flexSwitchCheckDefault" name="is_member"
+                                            {{ $member->is_member ? 'checked' : '' }} />
                                     </div>
                                 </div>
                             </div>

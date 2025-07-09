@@ -27,11 +27,16 @@ class Member extends Authenticable implements JWTSubject
         return [];
     }
 
-    protected $appends = ['statusstring', 'genderstring'];
+    protected $appends = ['statusstring', 'genderstring', 'namestring', 'memberstring'];
 
     public function getStatusStringAttribute()
     {
         return $this->status ? '<span class="badge bg-success text-dark">ON</span>' : '<span class="badge bg-secondary">OFF</span>';
+    }
+
+    public function getMemberStringAttribute()
+    {
+        return $this->is_member ? '<span class="badge bg-success text-dark">MEMBER</span>' : '<span class="badge bg-secondary">NON MEMBER</span>';
     }
 
     public function getGenderStringAttribute()
@@ -39,29 +44,19 @@ class Member extends Authenticable implements JWTSubject
         return GenderEnum::from($this->gender)->label();
     }
 
+    public function getNameStringAttribute()
+    {
+        return $this->name . ' ' . GenderEnum::from($this->gender)->label();
+    }
+
     public function office()
     {
         return $this->belongsTo(Office::class, 'office_id');
     }
 
-    public function division()
+    public function city()
     {
-        return $this->belongsTo(Division::class, 'division_id');
-    }
-
-    public function position()
-    {
-        return $this->belongsTo(Position::class, 'position_id');
-    }
-
-    public function overtime()
-    {
-        return $this->belongsToMany(Overtime::class, 'member_overtime', 'member_id', 'overtime_id');
-    }
-
-    public function devices()
-    {
-        return $this->hasMany(MemberDevice::class, 'member_id');
+        return $this->belongsTo(City::class, 'city_id');
     }
 
     public function photo(): Attribute
@@ -78,12 +73,6 @@ class Member extends Authenticable implements JWTSubject
         );
     }
 
-    protected function end(): Attribute
-    {
-        return Attribute::make(
-            get: fn($value) => Carbon::parse($value)->timezone($this->user_timezone())->isoFormat('HH:mm'),
-        );
-    }
 
     public function createdAt(): Attribute
     {
