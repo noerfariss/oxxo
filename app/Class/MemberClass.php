@@ -5,6 +5,8 @@ namespace App\Class;
 use App\Models\Member;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 
 class MemberClass
 {
@@ -58,5 +60,27 @@ class MemberClass
 
         // Gabungkan kode
         return "MBR{$date}-{$sequence}";
+    }
+
+    public function sendOtp(Member $member)
+    {
+        $pesan = "Haloo *" . $member->email . "*,\n\nTerima kasih sudah melakukan Registrasi. Segera aktivasi dengan memasukkan kode: *" . $member->otp . "* \n\n" . Str::random(10);
+
+        try {
+
+            $response = Http::withHeaders([
+                'Authorization' => env('FONNTE_KEY'),
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json'
+
+            ])->post(env('FONNTE_SENDER'), [
+                'target' => $member->whatsapp,
+                'countryCode' => '62',
+                'preview' => false,
+                'message' => $pesan,
+            ]);
+        } catch (\Throwable $th) {
+            info('Fonnte error: ' . $th->getMessage());
+        }
     }
 }

@@ -1,20 +1,70 @@
-import { Button, Card, Col, List, notification } from 'antd'
+import { Button, Card, Col, DatePicker, Drawer, List, notification } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { Colors } from '../utils/Colors'
 import { CalendarOutlined, PercentageOutlined, RightCircleTwoTone, TagsTwoTone, UserOutlined } from '@ant-design/icons'
 import axios from 'axios'
 import { getSlug } from '../utils/Helper'
+import CustomerSelect from '../components/CustomerSelect'
 
 export const RightBar = ({ cart = [], setCart }) => {
     const [api, contextHolder] = notification.useNotification();
     const baseUrl = import.meta.env.VITE_APP_URL;
+    const [open, setOpen] = useState(false);
+
+    const showDrawer = () => {
+        setOpen(true);
+    };
+
+    const onClose = () => {
+        setOpen(false);
+    };
+
     const slug = getSlug();
 
-    const [total, setTotal] = useState(0);
+    const [subtotal, setSubtotal] = useState(0);
 
     const totalPrice = cart.reduce((total, item) => {
         return total + (item.price * item.quantity);
     }, 0);
+
+    const [information, setInformation] = useState({
+        diskon: 0,
+        pickup: '-',
+        member: '',
+        memberID: ''
+    });
+
+    const diskonPersen = Number(information.diskon) || 0;
+    const diskonRupiah = (diskonPersen / 100) * subtotal;
+    const grandTotal = subtotal - diskonRupiah;
+
+    const setDatePickup = (date, datestring) => {
+        setInformation((prev) => {
+            return ({
+                ...prev,
+                pickup: datestring
+            })
+        })
+    }
+
+    const setDiskon = (val) => {
+        setInformation((prev) => {
+            return ({
+                ...prev,
+                diskon: val
+            })
+        })
+    }
+
+    const setSelectedCustomer = (data) => {
+        setInformation((prev) => {
+            return ({
+                ...prev,
+                memberID: data.value,
+                member: data.label
+            })
+        })
+    }
 
     const handleProcess = async () => {
         try {
@@ -43,10 +93,7 @@ export const RightBar = ({ cart = [], setCart }) => {
 
     }
 
-    // const openNotificationWithIcon = (type, title, description) => {
-    //     return
-    // }
-    const openNotificationWithIcon = type  => {
+    const openNotificationWithIcon = type => {
         api[type]({
             message: 'Sukses',
             description:
@@ -55,7 +102,7 @@ export const RightBar = ({ cart = [], setCart }) => {
     };
 
     useEffect(() => {
-        setTotal(totalPrice);
+        setSubtotal(totalPrice);
     }, [cart])
 
     return (
@@ -65,7 +112,7 @@ export const RightBar = ({ cart = [], setCart }) => {
             <div style={{ height: '100vh', backgroundColor: Colors.primary, paddingRight: 22, paddingLeft: 22, paddingTop: 14, paddingBottom: 14, display: 'flex', flexDirection: 'column' }}>
                 <section style={{ textAlign: 'right' }}>
                     <h3 style={{ padding: 0, margin: 0, fontWeight: 'normal', color: Colors.gray50 }}>Total</h3>
-                    <h2 style={{ color: Colors.yellow, fontSize: 32, margin: 0, padding: 0, fontWeight: 500 }}>Rp {total}</h2>
+                    <h2 style={{ color: Colors.yellow, fontSize: 32, margin: 0, padding: 0, fontWeight: 500 }}>Rp {grandTotal}</h2>
                 </section>
 
                 {/* list  */}
@@ -98,42 +145,66 @@ export const RightBar = ({ cart = [], setCart }) => {
                         <div>
                             <TagsTwoTone /> Informasi
                         </div>
-                        <button type='button' style={{ border: 0, background: 'none', color: Colors.gray50, letterSpacing: .5, fontSize: 13, borderWidth: 1, borderStyle: 'solid', borderColor: Colors.gray100, borderRadius: 4 }}>Edit <RightCircleTwoTone /></button>
                     </h3>
-                    <section style={{ marginBottom: 22 }}>
+
+
+                    <section style={{ marginBottom: 22, cursor: 'pointer' }} onClick={showDrawer}>
+                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
+                            <h4 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'normal', letterSpacing: .5 }}>Subtotal</h4>
+                            <h6 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'bold' }}>Rp {subtotal}</h6>
+                        </div>
                         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
                             <h4 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'normal', letterSpacing: .5 }}><PercentageOutlined /> Diskon</h4>
-                            <h6 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'bold' }}>10%</h6>
+                            <h6 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'bold' }}>{information.diskon}%</h6>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
                             <h4 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'normal', letterSpacing: .5 }}><CalendarOutlined /> Diambil pada tanggal</h4>
-                            <h6 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'bold' }}>20 Juni 2025</h6>
+                            <h6 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'bold' }}>{information.pickup}</h6>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
-                            <h4 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'normal', letterSpacing: .5 }}><UserOutlined /> Member</h4>
-                            <h6 style={{ margin: 0, padding: 0, color: Colors.yellow, fontWeight: 'bold', textTransform: 'uppercase' }}>nur faris prastyo</h6>
+                            <h4 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'normal', letterSpacing: .5 }}><UserOutlined /> Customer</h4>
+                            <h6 style={{ margin: 0, padding: 0, color: Colors.yellow, fontWeight: 'bold', textTransform: 'uppercase' }}>{information.member}</h6>
                         </div>
                     </section>
 
                     <button
                         type="button"
                         onClick={handleProcess}
-                        disabled={total > 0 ? false : true}
+                        disabled={subtotal > 0 ? false : true}
                         style={{
-                            backgroundColor: total > 0 ? Colors.yellow : Colors.blue100,
-                            color: total > 0 ? Colors.black : Colors.gray500,
+                            backgroundColor: subtotal > 0 ? Colors.yellow : Colors.blue100,
+                            color: subtotal > 0 ? Colors.black : Colors.gray500,
                             border: 0,
                             width: '100%',
                             padding: 12,
                             borderRadius: 8,
                             marginBottom: 24,
-                            cursor: total > 0 ? 'pointer' : 'disabled',
+                            cursor: subtotal > 0 ? 'pointer' : 'disabled',
                         }}
                     >
                         Proses
                     </button>
                 </section>
 
+                <Drawer
+                    title='Informasi'
+                    closable={{ 'aria-label': 'Close Button' }}
+                    onClose={onClose}
+                    open={open}
+                >
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
+                        <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}><PercentageOutlined /> Diskon</h4>
+                        <input type='text' defaultValue={information.diskon} onChange={(e) => setDiskon(e.target.value)} />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
+                        <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}><CalendarOutlined /> Diambil pada tanggal</h4>
+                        <DatePicker onChange={setDatePickup} />
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
+                        <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}><UserOutlined /> Customer</h4>
+                        <CustomerSelect onChange={setSelectedCustomer} />
+                    </div>
+                </Drawer>
             </div>
         </>
     )

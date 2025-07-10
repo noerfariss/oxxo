@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Class\ResponseClass;
 use App\Models\Category;
+use App\Models\Member;
 use App\Models\Order;
 use App\Models\OutletKios;
 use App\Models\Product;
@@ -126,5 +127,24 @@ class CashierController extends Controller implements HasMiddleware
             info($th->getMessage());
             return ResponseClass::error();
         }
+    }
+
+    public function customers(Request $request)
+    {
+        $search = $request->query('q');
+        $query = Member::query();
+
+        if ($search) {
+            $query->where('name', 'like', "%{$search}%");
+        }
+
+        $customers = $query->limit(10)->get();
+
+        return response()->json($customers->map(function ($c) {
+            return [
+                'value' => $c->id,
+                'label' => $c->name,
+            ];
+        }));
     }
 }

@@ -54,6 +54,7 @@ Route::middleware('xss')->group(function () {
             Route::post('/items', [CashierController::class, 'items'])->name('cashier.items');
             Route::get('/categories', [CashierController::class, 'categories'])->name('cashier.categories');
             Route::post('/process', [CashierController::class, 'save'])->name('cashier.process');
+            Route::get('/customers', [CashierController::class, 'customers'])->name('cashier.customers');
         })->middleware([HandlePrecognitiveRequests::class]);
 
         Route::prefix('members')->group(function () {
@@ -106,16 +107,20 @@ Route::middleware('xss')->group(function () {
         Route::resource('password', PasswordController::class);
 
         // ======== END PENGATURAN ==============================================
-
-        Route::prefix('master')->group(function () {
-            Route::post('/ganti-foto', [AjaxController::class, 'ganti_foto'])->name('master.foto');
-            Route::post('/state', [AjaxController::class, 'state'])->name('drop-state');
-            Route::post('/city', [AjaxController::class, 'city'])->name('drop-city');
-            Route::post('/district', [AjaxController::class, 'district'])->name('drop-district');
-            Route::post('/minutes', [AjaxController::class, 'minutes'])->name('drop-minutes');
-            Route::post('/office', [AjaxController::class, 'office'])->name('drop-office');
-            Route::post('/category', [AjaxController::class, 'category'])->name('drop-category');
-        });
     });
     // ----------- end administrator
+
+    // frontend
+    require __DIR__ . '/customer.php';
+
+    // Master ajax
+    Route::prefix('master')->group(function () {
+        Route::post('/ganti-foto', [AjaxController::class, 'ganti_foto'])->name('master.foto');
+        Route::post('/state', [AjaxController::class, 'state'])->name('drop-state');
+        Route::post('/city', [AjaxController::class, 'city'])->name('drop-city');
+        Route::post('/district', [AjaxController::class, 'district'])->name('drop-district');
+        Route::post('/minutes', [AjaxController::class, 'minutes'])->name('drop-minutes');
+        Route::post('/office', [AjaxController::class, 'office'])->name('drop-office');
+        Route::post('/category', [AjaxController::class, 'category'])->name('drop-category');
+    });
 });
