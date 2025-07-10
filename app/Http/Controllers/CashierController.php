@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Class\DepositClass;
 use App\Class\ResponseClass;
 use App\Models\Category;
 use App\Models\Member;
@@ -140,10 +141,13 @@ class CashierController extends Controller implements HasMiddleware
 
         $customers = $query->limit(10)->get();
 
+        // dd($customers->toArray());
+
         return response()->json($customers->map(function ($c) {
             return [
                 'value' => $c->id,
                 'label' => $c->name,
+                'saldo' => DepositClass::saldo($c)
             ];
         }));
     }

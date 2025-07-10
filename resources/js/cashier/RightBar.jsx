@@ -1,4 +1,4 @@
-import { Button, Card, Col, DatePicker, Drawer, List, notification } from 'antd'
+import { Button, Card, Col, DatePicker, Drawer, List, Modal, notification } from 'antd'
 import React, { useEffect, useState } from 'react'
 import { Colors } from '../utils/Colors'
 import { CalendarOutlined, PercentageOutlined, RightCircleTwoTone, TagsTwoTone, UserOutlined } from '@ant-design/icons'
@@ -31,7 +31,8 @@ export const RightBar = ({ cart = [], setCart }) => {
         diskon: 0,
         pickup: '-',
         member: '',
-        memberID: ''
+        memberID: '',
+        memberSaldo: '',
     });
 
     const diskonPersen = Number(information.diskon) || 0;
@@ -58,38 +59,30 @@ export const RightBar = ({ cart = [], setCart }) => {
 
     const setSelectedCustomer = (data) => {
         setInformation((prev) => {
+
             return ({
                 ...prev,
                 memberID: data.value,
-                member: data.label
+                member: data.label,
+                memberSaldo: data.saldo
             })
         })
     }
 
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
+
     const handleProcess = async () => {
-        try {
-            const req = await axios.post(`${baseUrl}/auth/cashier/process`, {
-                cart: cart,
-                slug: slug
-
-            }, {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });
-
-            const res = await req.data;
-            const data = res.data;
-            console.log(data);
-            setCart([]);
-            openNotificationWithIcon('success');
-
-
-        } catch (error) {
-            console.log(error);
-            openNotificationWithIcon('error');
-        }
 
     }
 
@@ -169,7 +162,7 @@ export const RightBar = ({ cart = [], setCart }) => {
 
                     <button
                         type="button"
-                        onClick={handleProcess}
+                        onClick={() => setIsModalOpen(true)}
                         disabled={subtotal > 0 ? false : true}
                         style={{
                             backgroundColor: subtotal > 0 ? Colors.yellow : Colors.blue100,
@@ -186,6 +179,7 @@ export const RightBar = ({ cart = [], setCart }) => {
                     </button>
                 </section>
 
+                {/* sidebar detail informasi (diskon, customer, tgl diambil) */}
                 <Drawer
                     title='Informasi'
                     closable={{ 'aria-label': 'Close Button' }}
@@ -203,8 +197,64 @@ export const RightBar = ({ cart = [], setCart }) => {
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
                         <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}><UserOutlined /> Customer</h4>
                         <CustomerSelect onChange={setSelectedCustomer} />
+
+                        {
+                            information.memberSaldo !== '' && <h6>Saldo: Rp {information.memberSaldo}</h6>
+                        }
                     </div>
                 </Drawer>
+
+                {/* modal detail proses konfirmasi */}
+                <Modal
+                    title="Detail Pesanan"
+                    closable={{ 'aria-label': 'Custom Close Button' }}
+                    open={isModalOpen}
+                    okText='Proses Transaksi'
+                    cancelText='Batal'
+                    onOk={handleOk}
+                    onCancel={handleCancel}
+                >
+                    <section style={{ flex: 1, height: 320, overflowY: 'scroll' }}>
+                        {
+                            cart.map((val, i) => {
+                                return (
+                                    <div key={i} style={{ borderWidth: 1, borderColor: Colors.blue700, borderStyle: 'solid', borderRadius: 8, padding: 8, display: 'flex', flexDirection: 'row', justifyContent: 'space-between', position: 'relative', marginBottom: 12 }}>
+                                        <div style={{ flex: 2 }}>
+                                            <h5 style={{ margin: 0, padding: 0, fontWeight: 'bold', fontSize: 11, letterSpacing: .5 }}>{val.category}</h5>
+                                            <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}>{val.name}</h4>
+                                            <div style={{ fontSize: 11, fontStyle: 'italic' }}>- Rp {val.price}</div>
+                                            <div style={{ fontSize: 11, fontStyle: 'italic' }}>- Uk. 2 x 3.2 Meter</div>
+                                        </div>
+                                        <div style={{ backgroundColor: Colors.yellow, width: 20, height: 20, fontSize: 14, fontWeight: 'bold', textAlign: "center", borderRadius: 10, marginTop: 18 }}>{val.quantity}</div>
+                                        <div style={{ textAlign: 'right', flex: 1 }}>
+                                            <h6 style={{ margin: 0, padding: 0, fontWeight: 'normal', fontSize: 11, letterSpacing: .5 }}>{val.attribute}</h6>
+                                            <h6 style={{ margin: 0, padding: 0, fontWeight: 'bold' }}>Rp {val.subtotal}</h6>
+                                        </div>
+                                    </div>
+                                )
+                            })
+                        }
+                    </section>
+
+                    <section style={{ marginBottom: 22, cursor: 'pointer' }} onClick={showDrawer}>
+                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 1, paddingTop: 2 }}>
+                            <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}>Subtotal</h4>
+                            <h6 style={{ margin: 0, padding: 0, fontWeight: 'bold' }}>Rp {subtotal}</h6>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 1, paddingTop: 2 }}>
+                            <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}><PercentageOutlined /> Diskon</h4>
+                            <h6 style={{ margin: 0, padding: 0, fontWeight: 'bold' }}>{information.diskon}%</h6>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 1, paddingTop: 2 }}>
+                            <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}><CalendarOutlined /> Diambil pada tanggal</h4>
+                            <h6 style={{ margin: 0, padding: 0, fontWeight: 'bold' }}>{information.pickup}</h6>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 1, paddingTop: 2 }}>
+                            <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}><UserOutlined /> Customer</h4>
+                            <h6 style={{ margin: 0, padding: 0, color: Colors.primary, fontWeight: 'bold', textTransform: 'uppercase' }}>{information.member}</h6>
+                        </div>
+                    </section>
+                </Modal>
             </div>
         </>
     )
