@@ -178,6 +178,7 @@ const Items = ({ datas = [], setAddToCart = {} }) => {
                             rows={4}
                             style={{ borderColor: Colors.gray400 }}
                             placeholder='Misalnya: Baju sudah ada goresan...'
+                            defaultValue={''}
                             onChange={(e) => handleSelectedNoted(e.target.value)}
                         >
                         </TextArea>
