@@ -1,6 +1,5 @@
-<div class="modal fade" id="modalDetailTable" tabindex="-1"
-    aria-labelledby="modalDetailTableLabel" aria-hidden="true">
-    <div class="modal-dialog modal-md">
+<div class="modal fade" id="modalDetailTable" tabindex="-1" aria-labelledby="modalDetailTableLabel" aria-hidden="true">
+    <div class="modal-dialog modal-{{ isset($size) ? $size : 'md' }}">
         <div class="modal-content">
             @csrf
             <div class="modal-header">

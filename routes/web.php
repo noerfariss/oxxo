@@ -11,6 +11,7 @@ use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MemberController;
 use App\Http\Controllers\MemberTemplateController;
 use App\Http\Controllers\OfficeController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OutletKiosController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PermissionController;
@@ -45,6 +46,11 @@ Route::middleware('xss')->group(function () {
             Route::get('/android-version', [HomeController::class, 'androidVersion'])->name('chart.android.version');
             Route::get('/android-merk', [HomeController::class, 'androidMerk'])->name('chart.android.merk');
             Route::post('/daily-attendance', [HomeController::class, 'dailyAttendance'])->name('chart.daily.attendance');
+        });
+
+        Route::prefix('order')->name('order.')->group(function () {
+            Route::get('/', [OrderController::class, 'index'])->name('index');
+            Route::post('/order-ajax', [OrderController::class, 'ajax'])->name('ajax');
         });
 
         Route::prefix('cashier')->group(function () {

@@ -78,7 +78,9 @@ export const RightBar = ({ cart = [], setCart }) => {
         try {
             const req = await axios.post(`${baseUrl}/auth/cashier/process`, {
                 cart: cart,
-                slug: slug
+                slug: slug,
+                member: information.memberID,
+                discount: information.diskon,
 
             }, {
                 headers: {

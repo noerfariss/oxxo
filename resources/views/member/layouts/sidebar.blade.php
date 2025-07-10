@@ -29,6 +29,15 @@
             </li>
         @endcan
 
+        @can('CASHIER_READ')
+            <li class="menu-item {{ menuAktif(['cashier.index']) }}">
+                <a href="{{ route('order.index') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-qr"></i>
+                    <div data-i18n="Analytics">Data Order</div>
+                </a>
+            </li>
+        @endcan
+
 
         @canany(['OUTLETKIOS_READ', 'OFFICE_READ', 'PRODUCT_READ', 'CATEGORY_READ'])
             <li class="menu-header small text-uppercase"><span class="menu-header-text">Master</span></li>

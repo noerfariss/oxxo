@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Class\DepositClass;
+use App\Class\OrderClass;
 use App\Class\ResponseClass;
 use App\Models\Category;
 use App\Models\Member;
@@ -107,17 +108,31 @@ class CashierController extends Controller implements HasMiddleware
     {
         $slug = $request->slug;
         $cart = $request->cart;
+        $member = $request->member;
+        $discount = $request->discount;
+        $membertext = Member::find($member);
+
         $kios = OutletKios::where('uuid', $slug)->first();
 
         $productId = collect($cart)->pluck('id')->toArray();
 
+        $subtotal = collect($cart)->sum('subtotal');
+        $discountrupiah = (int) $discount > 0 ? ($discount / 100) * $subtotal : 0;
+        $grandtotal = $subtotal - $discountrupiah;
+
         DB::beginTransaction();
         try {
             Order::create([
+                'numberid' => OrderClass::generateNumber($kios->id),
                 'kios_id' => $kios->id,
                 'kiostext' => $kios,
                 'product_id' => $productId,
                 'products' => $cart,
+                'member_id' => $member,
+                'membertext' => $membertext,
+                'subtotal' => $subtotal,
+                'discount' => $discount,
+                'grandtotal' => $grandtotal
             ]);
 
             DB::commit();
