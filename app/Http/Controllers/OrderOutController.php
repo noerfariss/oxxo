@@ -9,17 +9,17 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
-class OrderController extends Controller
+class OrderOutController extends Controller
 {
     public function index()
     {
-        return view('member.order.index');
+        return view('member.order.orderout');
     }
 
     public function ajax(Request $request)
     {
         $data = Order::query()
-            ->where('status', OrderEnum::NEW->value);
+            ->where('status', OrderEnum::OUT->value);
 
         return DataTables::eloquent($data)
             ->addColumn('product_count', fn($e) => count($e->product_id))
@@ -28,44 +28,26 @@ class OrderController extends Controller
             ->addColumn('qtytotal', fn($e) => collect($e->products)->sum('quantity'))
             ->addColumn('payment', fn($e) => 'Saldo')
             ->addColumn('customer', fn($e) => 'JEMS AINSTAIN')
-            // ->addColumn('discount_nominal', function(){
-
-            // })
             ->addColumn('aksi', function ($e) {
-                $keluarForm = '<form method="POST" action="' . route('order.keluar', $e->id) . '" onsubmit="return confirm(\'Proses barang keluar?\')">' .
+                return '<form method="POST" action="' . route('order.masuk', $e->id) . '" onsubmit="return confirm(\'Proses barang masuk?\')">' .
                     csrf_field() .
                     method_field('PUT') .
-                    '<button type="submit" class="btn btn-sm btn-primary">Proses barang keluar</button>' .
+                    '<button type="submit" class="btn btn-sm btn-primary">Proses barang Masuk</button>' .
                     '</form>';
-
-                $printButton = '<a href="' . route('order.print', $e->id) . '" target="_blank" class="btn btn-sm btn-secondary mt-1">Print Invoice</a>';
-
-                return $keluarForm . $printButton;
             })
             ->rawColumns(['aksi'])
             ->make(true);
     }
 
-    public function prosesKeluar($id)
+    public function prosesIn($id)
     {
         $order = Order::findOrFail($id);
-        $order->status = OrderEnum::OUT->value;
-        $order->orderout = Carbon::now();
+        $order->status = OrderEnum::IN->value;
+        $order->orderin = Carbon::now();
         $order->save();
 
-        return back()->with('pesan', '<div class="alert alert-success">Order berhasil diproses menjadi keluar.</div>');
+        return back()->with('pesan', '<div class="alert alert-success">Order berhasil diproses menjadi masuk.</div>');
     }
-
-    public function print($id)
-    {
-        $order = Order::query()
-            ->findOrFail($id);
-
-        // dd($order->toArray());
-
-        return view('member.order.orderprint', compact('order'));
-    }
-
 
     public function report(Request $request)
     {
@@ -79,7 +61,7 @@ class OrderController extends Controller
         $tanggal = explode(' to ', $request->tanggal);
 
         // Query order berdasarkan tanggal dan status NEW (bisa disesuaikan)
-        $orders = Order::where('status', OrderEnum::NEW->value)
+        $orders = Order::where('status', OrderEnum::OUT->value)
             ->whereDate('created_at', '>=', $dates[0])
             ->whereDate('created_at', '<=', $dates[1])
             ->get();
@@ -92,7 +74,7 @@ class OrderController extends Controller
         $grandTotal = collect($orders)->sum('grandtotal');
 
         // Load view untuk report pdf, kirim data orders dan tanggal
-        $pdf = Pdf::loadView('member.order.orderpdf', [
+        $pdf = Pdf::loadView('member.order.orderoutpdf', [
             'orders' => $orders,
             'startDate' => $dates[0],
             'endDate' => $dates[1],
@@ -103,6 +85,6 @@ class OrderController extends Controller
 
         // Download PDF dengan nama file report_order_YYYYMMDD_YYYYMMDD.pdf
         // return $pdf->download("report_order_{$startDate}_{$endDate}.pdf");
-        return $pdf->stream("report_order_{$dates[0]}_{$dates[1]}.pdf");
+        return $pdf->stream("report_barang_keluar_{$dates[0]}_{$dates[1]}.pdf");
     }
 }

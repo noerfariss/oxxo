@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="card mb-4">
-            <h5 class="card-header">data order</h5>
+            <h5 class="card-header">Barang Masuk</h5>
 
             <div class="card-body">
                 @if (session()->has('pesan'))
@@ -26,7 +26,7 @@
                 @endif
 
                 <div class="row">
-                    <div class="col-sm-4 mt-2">
+                    <div class="col-sm-3 mt-2">
                         <input type="text" class="form-control" id="tanggal">
                     </div>
                     <div class="col-sm-2 mt-2">
@@ -35,7 +35,6 @@
                     <div class="col-sm-2 mt-2">
                         <button id="btnReport" class="btn btn-success btn-sm">Report</button>
                     </div>
-
                 </div>
             </div>
 
@@ -95,7 +94,7 @@
                 [5, 'desc']
             ],
             ajax: {
-                url: "{{ route('order.ajax') }}",
+                url: "{{ route('order.inajax') }}",
                 type: "POST",
                 data: function(d) {
                     d._token = $("input[name=_token]").val();
@@ -138,12 +137,11 @@
 
         $('#datatable tbody').on('click', 'tr td', function() {
             const data = datatables.row(this).data();
+            $('#modalDetailTable').modal('show');
+            $('#modalDetailTableLabel').text('Data Order');
 
             console.log(data);
 
-
-            $('#modalDetailTable').modal('show');
-            $('#modalDetailTableLabel').text('Data Order');
 
             let dataTable = `
             <table class="table table-sm table-hover">
@@ -219,15 +217,13 @@
                         <td colspan="3"></td>
                         <td>Subtotal</td>
                         <td>${data.qtytotal}</td>
-                        <td class="text-end">${data.subtotaltext}</td>
+                        <td class="text-end">${data.subtotal}</td>
                         <td></td>
                     </tr>
                     <tr>
                         <td colspan="3"></td>
-                        <td>Diskon ${data.discount_type == 'persen' ? '('+data.discount + '%)' : ''}</td>
-                        <td class="text-end">
-                                -${discount}
-                        </td>
+                        <td>Diskon</td>
+                        <td class="text-end">${data.discount ? data.discount+'%' : ''}</td>
                         <td></td>
                         <td></td>
                     </tr>
@@ -240,44 +236,11 @@
                     </tr>
                     </tbody>
                 </table>
-
-                 <div class="text-end mt-3 d-flex justify-content-end gap-2">
-                    <form id="formProsesKeluar" method="POST">
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-sm btn-primary">Proses barang keluar</button>
-                    </form>
-
-                    <a id="btnPrintInvoice" href="#" target="_blank" class="btn btn-sm btn-secondary">Print Invoice</a>
-                </div>
             `;
 
+            // dataTable += data.aksi;
 
             $('#modalDetailTableBody').html(dataTable);
-
-            $('#btnPrintInvoice').attr('href', `/auth/order/${data.id}/print`);
-
-            $('#formProsesKeluar').attr('action', `{{ url('auth/order') }}/${data.id}/keluar`);
-            $(document).on('submit', '#formProsesKeluar', function(e) {
-                e.preventDefault();
-
-                if (!confirm('Yakin proses barang keluar?')) return;
-
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(res) {
-                        alert('Order berhasil diproses!');
-                        $('#modalDetailTable').modal('hide');
-                        datatables.ajax.reload(); // reload tabel agar status terbaru muncul
-                    },
-                    error: function(err) {
-                        alert('Gagal memproses order!');
-                        console.error(err);
-                    }
-                });
-            });
-
         });
     </script>
 
@@ -289,7 +252,7 @@
                 return;
             }
             // Redirect ke route report dengan parameter tanggal (GET)
-            window.open("{{ route('order.report') }}?tanggal=" + encodeURIComponent(tanggal), '_blank');
+            window.open("{{ route('order.inreport') }}?tanggal=" + encodeURIComponent(tanggal), '_blank');
         });
     </script>
 @endpush

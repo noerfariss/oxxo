@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\OrderEnum;
 use App\Trait\HasUuid;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -13,7 +14,15 @@ class Order extends Model
 
     protected $guarded = [];
 
-    protected function kiostext(): Attribute{
+    protected $appends = ['statuslabel'];
+
+    public function getStatusLabelAttribute()
+    {
+        return OrderEnum::from($this->status)->label();
+    }
+
+    protected function kiostext(): Attribute
+    {
         return Attribute::make(
             set: fn($value) => $value ? json_encode($value) : null,
             get: fn($value) => $value ? json_decode($value) : null
