@@ -18,31 +18,35 @@ class OrderController extends Controller
 
     public function ajax(Request $request)
     {
+        $type = $request->type == 'out' ? OrderEnum::OUT->value : OrderEnum::NEW->value;
+        $dates = pecahTanggal($request->dates);
+
         $data = Order::query()
-            ->where('status', OrderEnum::NEW->value);
+            ->where('status', $type)
+            ->whereBetween('created_at', [$dates[0] . ' 00:00:00', $dates[1] . ' 23:59:59']);
 
         return DataTables::eloquent($data)
             ->addColumn('product_count', fn($e) => count($e->product_id))
-            ->editColumn('subtotal', fn($e) => 'Rp ' . number_format($e->subtotal))
+            ->addColumn('subtotaltext', fn($e) => 'Rp ' . number_format($e->subtotal))
             ->editColumn('grandtotal', fn($e) => 'Rp ' . number_format($e->grandtotal))
             ->addColumn('qtytotal', fn($e) => collect($e->products)->sum('quantity'))
             ->addColumn('payment', fn($e) => 'Saldo')
-            ->addColumn('customer', fn($e) => 'JEMS AINSTAIN')
-            // ->addColumn('discount_nominal', function(){
-
-            // })
-            ->addColumn('aksi', function ($e) {
-                $keluarForm = '<form method="POST" action="' . route('order.keluar', $e->id) . '" onsubmit="return confirm(\'Proses barang keluar?\')">' .
-                    csrf_field() .
-                    method_field('PUT') .
-                    '<button type="submit" class="btn btn-sm btn-primary">Proses barang keluar</button>' .
-                    '</form>';
-
-                $printButton = '<a href="' . route('order.print', $e->id) . '" target="_blank" class="btn btn-sm btn-secondary mt-1">Print Invoice</a>';
-
-                return $keluarForm . $printButton;
+            ->addColumn('discount_nominal', function ($e) {
+                if ($e->discount_type === 'nominal') {
+                    return 'Rp ' . number_format($e->discount);
+                } else {
+                    $diskon = ((int) $e->discount / 100) * (int) $e->subtotal;
+                    return 'Rp ' . number_format($diskon);
+                }
             })
-            ->rawColumns(['aksi'])
+            ->addColumn('discount_if_persen', function ($e) {
+                if ($e->discount_type === 'persen') {
+                    return '(' . number_format($e->discount, 1) . '%)';
+                } else {
+                    return '';
+                }
+            })
+            // ->rawColumns(['aksi'])
             ->make(true);
     }
 
@@ -66,9 +70,9 @@ class OrderController extends Controller
         return view('member.order.orderprint', compact('order'));
     }
 
-
     public function report(Request $request)
     {
+        $type = $request->type == strtolower(OrderEnum::OUT->label()) ? OrderEnum::OUT->value : OrderEnum::NEW->value;
         $dates = pecahTanggal($request->tanggal);
         // Validasi tanggal input, wajib diisi dan format range tanggal "YYYY-MM-DD to YYYY-MM-DD"
         $request->validate([
@@ -79,7 +83,7 @@ class OrderController extends Controller
         $tanggal = explode(' to ', $request->tanggal);
 
         // Query order berdasarkan tanggal dan status NEW (bisa disesuaikan)
-        $orders = Order::where('status', OrderEnum::NEW->value)
+        $orders = Order::where('status', $type)
             ->whereDate('created_at', '>=', $dates[0])
             ->whereDate('created_at', '<=', $dates[1])
             ->get();
@@ -98,11 +102,21 @@ class OrderController extends Controller
             'endDate' => $dates[1],
             'numClients' => $numClients,
             'numPcs' => $numPcs,
-            'grandTotal' => $grandTotal
+            'grandTotal' => $grandTotal,
+            // 'logo' =>
+            'title' => $request->type == strtolower(OrderEnum::OUT->label()) ? 'Report Pickup (Barang Keluar)' : 'Report Drop Off (Barang Masuk)',
         ]);
 
         // Download PDF dengan nama file report_order_YYYYMMDD_YYYYMMDD.pdf
         // return $pdf->download("report_order_{$startDate}_{$endDate}.pdf");
         return $pdf->stream("report_order_{$dates[0]}_{$dates[1]}.pdf");
+    }
+
+    // ------------------ barang keluar (pickup) --------------------
+
+
+    public function out()
+    {
+        return view('member.order.orderout');
     }
 }

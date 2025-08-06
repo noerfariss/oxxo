@@ -33,19 +33,28 @@
 </head>
 
 <body>
-    <h3>Report Data Order</h3>
-    <p>Periode: {{ $startDate }} s/d {{ $endDate }}</p>
+    <table width="100%">
+        <tr>
+            <td style="width: 150px; text-align:center;">
+                <img src="{{ public_path('images/logo.png') }}" style="width: 120px;">
+            </td>
+            <td style="text-align: center;">
+                <h2 style="padding: 0; margin:0">{{ $title }}</h2>
+                <p style="padding:0; margin:0;">Periode: {{ $startDate }} s/d {{ $endDate }}</p>
+            </td>
+            <td style="width: 150px;"></td>
+        </tr>
+    </table>
 
-    <table border="1">
+    <table border="1" width="100%">
         <thead>
             <tr>
                 <th>No. Bill</th>
                 <th>ID</th>
                 <th>Customer</th>
-                <th>Items</th>
-                <th>Grandtotal</th>
+                <th style="text-align: center;">Items</th>
+                <th style="text-align: right;">Grandtotal</th>
                 <th>Date Input</th>
-                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -54,10 +63,9 @@
                     <td>{{ $order->numberid }}</td>
                     <td>{{ $order->membertext->numberid ?? '-' }}</td>
                     <td>{{ $order->membertext->name ?? '-' }}</td>
-                    <td>{{ collect($order->products)->sum('quantity') }}</td>
-                    <td>Rp {{ number_format($order->grandtotal) }}</td>
+                    <td style="text-align: center;">{{ collect($order->products)->sum('quantity') }}</td>
+                    <td style="text-align: right;">Rp {{ number_format($order->grandtotal) }}</td>
                     <td>{{ $order->created_at }}</td>
-                    <td>{{ $order->statuslabel }}</td>
                 </tr>
             @endforeach
         </tbody>
@@ -71,15 +79,15 @@
                 <td>:</td>
                 <td>{{ $numClients }}</td>
             </tr>
-             <tr>
+            <tr>
                 <td>Number Of Pieces</td>
                 <td>:</td>
                 <td>{{ $numPcs }}</td>
             </tr>
-             <tr>
+            <tr>
                 <td>Total</td>
                 <td>:</td>
-                <td>Rp {{ number_format($grandTotal,0,2) }}</td>
+                <td>Rp {{ number_format($grandTotal, 0, 2) }}</td>
             </tr>
         </tbody>
     </table>

@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="card mb-4">
-            <h5 class="card-header">Barang Keluar</h5>
+            <h5 class="card-header">pickup</h5>
 
             <div class="card-body">
                 @if (session()->has('pesan'))
@@ -26,7 +26,7 @@
                 @endif
 
                 <div class="row">
-                    <div class="col-sm-3 mt-2">
+                    <div class="col-sm-4 mt-2">
                         <input type="text" class="form-control" id="tanggal">
                     </div>
                     <div class="col-sm-2 mt-2">
@@ -35,6 +35,7 @@
                     <div class="col-sm-2 mt-2">
                         <button id="btnReport" class="btn btn-success btn-sm">Report</button>
                     </div>
+
                 </div>
             </div>
 
@@ -75,6 +76,7 @@
             maxDate: '{{ date('Y-m-d') }}',
             onClose: function() {
                 $('#tanggal').blur();
+                datatables.ajax.reload();
             }
         });
     </script>
@@ -94,11 +96,13 @@
                 [5, 'desc']
             ],
             ajax: {
-                url: "{{ route('order.outajax') }}",
+                url: "{{ route('order.ajax') }}",
                 type: "POST",
                 data: function(d) {
                     d._token = $("input[name=_token]").val();
                     d.cari = $('#cari').val();
+                    d.type = 'out';
+                    d.dates = $('#tanggal').val();
                 },
             },
             columns: [{
@@ -137,11 +141,9 @@
 
         $('#datatable tbody').on('click', 'tr td', function() {
             const data = datatables.row(this).data();
+
             $('#modalDetailTable').modal('show');
-            $('#modalDetailTableLabel').text('Data Order');
-
-            console.log(data);
-
+            $('#modalDetailTableLabel').text('Pickup (Barang Keluar)');
 
             let dataTable = `
             <table class="table table-sm table-hover">
@@ -217,14 +219,14 @@
                         <td colspan="3"></td>
                         <td>Subtotal</td>
                         <td>${data.qtytotal}</td>
-                        <td class="text-end">${data.subtotal}</td>
+                        <td class="text-end">${data.subtotaltext}</td>
                         <td></td>
                     </tr>
                     <tr>
                         <td colspan="3"></td>
-                        <td>Diskon</td>
-                        <td class="text-end">${data.discount ? data.discount+'%' : ''}</td>
-                        <td></td>
+                        <td>Diskon ${data.discount_if_persen}</td>
+                        <td class="text-end"></td>
+                        <td class="text-end"> - ${data.discount_nominal}</td>
                         <td></td>
                     </tr>
                     <tr>
@@ -237,24 +239,21 @@
                     </tbody>
                 </table>
 
-                 <div class="text-end mt-3">
-                    <form id="formProsesMasuk" method="POST">
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-sm btn-primary">Proses barang masuk</button>
-                    </form>
+                 <div class="text-end mt-3 d-flex justify-content-end gap-2">
+                                     <a id="btnPrintInvoice" href="#" target="_blank" class="btn btn-sm btn-secondary">Print Invoice</a>
                 </div>
             `;
 
-            // dataTable += data.aksi;
 
             $('#modalDetailTableBody').html(dataTable);
 
-            $('#formProsesMasuk').attr('action', `{{ url('auth/order') }}/${data.id}/masuk`);
+            $('#btnPrintInvoice').attr('href', `/auth/order/${data.id}/print`);
 
-            $(document).on('submit', '#formProsesMasuk', function(e) {
+            $('#formProsesKeluar').attr('action', `{{ url('auth/order') }}/${data.id}/keluar`);
+            $(document).on('submit', '#formProsesKeluar', function(e) {
                 e.preventDefault();
 
-                if (!confirm('Yakin proses barang masuk?')) return;
+                if (!confirm('Yakin proses barang keluar?')) return;
 
                 $.ajax({
                     url: $(this).attr('action'),
@@ -271,6 +270,7 @@
                     }
                 });
             });
+
         });
     </script>
 
@@ -282,7 +282,8 @@
                 return;
             }
             // Redirect ke route report dengan parameter tanggal (GET)
-            window.open("{{ route('order.outreport') }}?tanggal=" + encodeURIComponent(tanggal), '_blank');
+            window.open("{{ route('order.report') }}?tanggal=" + encodeURIComponent(tanggal) + "&type=out",
+                '_blank');
         });
     </script>
 @endpush

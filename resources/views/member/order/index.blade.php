@@ -76,6 +76,7 @@
             maxDate: '{{ date('Y-m-d') }}',
             onClose: function() {
                 $('#tanggal').blur();
+                datatables.ajax.reload();
             }
         });
     </script>
@@ -100,6 +101,7 @@
                 data: function(d) {
                     d._token = $("input[name=_token]").val();
                     d.cari = $('#cari').val();
+                    d.dates = $('#tanggal').val();
                 },
             },
             columns: [{
@@ -139,7 +141,7 @@
         $('#datatable tbody').on('click', 'tr td', function() {
             const data = datatables.row(this).data();
 
-            console.log(data);
+            // console.log(data);
 
 
             $('#modalDetailTable').modal('show');
@@ -224,11 +226,9 @@
                     </tr>
                     <tr>
                         <td colspan="3"></td>
-                        <td>Diskon ${data.discount_type == 'persen' ? '('+data.discount + '%)' : ''}</td>
-                        <td class="text-end">
-                                -${discount}
-                        </td>
-                        <td></td>
+                        <td>Diskon ${data.discount_if_persen}</td>
+                        <td class="text-end"></td>
+                        <td class="text-end"> - ${data.discount_nominal}</td>
                         <td></td>
                     </tr>
                     <tr>
@@ -260,20 +260,35 @@
             $(document).on('submit', '#formProsesKeluar', function(e) {
                 e.preventDefault();
 
-                if (!confirm('Yakin proses barang keluar?')) return;
+                Swal.fire({
+                    title: "Ingin memproses data ini?",
+                    showDenyButton: false,
+                    showCancelButton: true,
+                    confirmButtonText: "Ya Lanjutkan!",
+                    denyButtonText: `Batal`
+                }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: $(this).attr('action'),
+                            type: 'POST',
+                            data: $(this).serialize(),
+                            success: function(res) {
+                                Swal.fire({
+                                    title: "Data berhasil diproses",
+                                    icon: "success",
+                                    draggable: true
+                                });
 
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(res) {
-                        alert('Order berhasil diproses!');
-                        $('#modalDetailTable').modal('hide');
-                        datatables.ajax.reload(); // reload tabel agar status terbaru muncul
-                    },
-                    error: function(err) {
-                        alert('Gagal memproses order!');
-                        console.error(err);
+                                $('#modalDetailTable').modal('hide');
+                                datatables.ajax
+                            .reload(); // reload tabel agar status terbaru muncul
+                            },
+                            error: function(err) {
+                                alert('Gagal memproses order!');
+                                console.error(err);
+                            }
+                        });
                     }
                 });
             });
@@ -289,7 +304,8 @@
                 return;
             }
             // Redirect ke route report dengan parameter tanggal (GET)
-            window.open("{{ route('order.report') }}?tanggal=" + encodeURIComponent(tanggal), '_blank');
+            window.open("{{ route('order.report') }}?tanggal=" + encodeURIComponent(tanggal) + "&type=in",
+                '_blank');
         });
     </script>
 @endpush

@@ -30,7 +30,7 @@
         @endcan
 
         @can('CASHIER_READ')
-            <li class="menu-item {{ menuAktif(['cashier.index']) }}">
+            <li class="menu-item {{ menuAktif(['order.index']) }}">
                 <a href="{{ route('order.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-qr"></i>
                     <div data-i18n="Analytics">Data Order</div>
