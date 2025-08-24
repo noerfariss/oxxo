@@ -4,7 +4,7 @@ import { Colors } from '../utils/Colors';
 import TextArea from 'antd/es/input/TextArea';
 import { CheckCircleTwoTone } from '@ant-design/icons';
 
-const Items = ({ datas = [], setAddToCart = {} }) => {
+const Items = ({ datas = [], setAddToCart = {}, remarks }) => {
     const [isModalOpen, setModalOpen] = useState(false);
     const [singleData, setSingleData] = useState({});
     const [btnDisabled, setBtnDisabled] = useState(true);
@@ -17,8 +17,11 @@ const Items = ({ datas = [], setAddToCart = {} }) => {
         price: '',
         quantity: 0,
         subtotal: 0,
-        noted: ''
+        noted: '',
+        remarks: ''
     });
+
+    console.log(selectedItem);
 
     // filter single data dan buka modal
     const handleSelected = (id) => {
@@ -56,6 +59,25 @@ const Items = ({ datas = [], setAddToCart = {} }) => {
             })
         });
     }
+
+    const handleSelectedRemarks = (remarkId, checked) => {
+        setSelectedItem((prev) => {
+            let updatedRemarks = prev.remarks || [];
+
+            if (checked) {
+                // tambahkan remark jika dicentang
+                updatedRemarks = [...updatedRemarks, remarkId];
+            } else {
+                // hapus remark jika di-uncheck
+                updatedRemarks = updatedRemarks.filter((id) => id !== remarkId);
+            }
+
+            return {
+                ...prev,
+                remarks: updatedRemarks
+            };
+        });
+    };
 
     const handleAddToCart = () => {
         setAddToCart(selectedItem);
@@ -171,6 +193,22 @@ const Items = ({ datas = [], setAddToCart = {} }) => {
 
                         }
                     </div>
+
+                    <div>
+                        {remarks.map((val, i) => (
+                            <label key={i} style={{ display: "block", marginBottom: "4px" }}>
+                                <input
+                                    type="checkbox"
+                                    name="remarks[]"
+                                    value={val.id}
+                                    checked={selectedItem?.remarks?.includes(val.id) || false}
+                                    onChange={(e) => handleSelectedRemarks(val.id, e.target.checked)}
+                                />{" "}
+                                {val.name}
+                            </label>
+                        ))}
+                    </div>
+
 
                     <div style={{ marginBottom: 22 }}>
                         <h5 style={{ margin: 0, padding: 0, fontWeight: 500 }}>Catatan</h5>

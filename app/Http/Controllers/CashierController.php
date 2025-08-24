@@ -10,6 +10,7 @@ use App\Models\Member;
 use App\Models\Order;
 use App\Models\OutletKios;
 use App\Models\Product;
+use App\Models\Remark;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -99,6 +100,15 @@ class CashierController extends Controller implements HasMiddleware
     public function categories()
     {
         $data = Category::query()
+            ->get();
+
+        return ResponseClass::success(data: $data);
+    }
+
+    public function remaks()
+    {
+        $data = Remark::query()
+            ->where('status', true)
             ->get();
 
         return ResponseClass::success(data: $data);

@@ -14,10 +14,32 @@ export default function Cashier() {
     const [search, setSearch] = useState('');
     const [searchCategory, setSearchCategory] = useState('');
 
+
     const [items, setItems] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [remarks, setRemarks] = useState([]);
 
     const [cart, setCart] = useState([]);
+
+    const getRemarks = async () => {
+        try {
+            const req = await axios.get(`${baseUrl}/auth/cashier/remaks`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const res = await req.data;
+            const data = res.data;
+
+            setRemarks(data);
+
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
 
     const getCategories = async () => {
         try {
@@ -86,6 +108,7 @@ export default function Cashier() {
 
     useEffect(() => {
         getCategories();
+        getRemarks();
     }, [])
 
     useEffect(() => {
@@ -102,7 +125,7 @@ export default function Cashier() {
                         <Category datas={categories} onChangeSearch={(e) => setSearch(e)} onChangeCategory={(e) => setSearchCategory(e)} searchCategory={searchCategory} />
                     </div>
                     <div style={{ paddingLeft: 12, paddingRight: 12, marginTop: 16, flex: 1 }}>
-                        <Items datas={items} setAddToCart={(e) => handleAddToCart(e)} />
+                        <Items datas={items} remarks={remarks} setAddToCart={(e) => handleAddToCart(e)} />
                     </div>
                     <div style={{ marginTop: 12, boxShadow: '0 0 7px #ECEFF1', backgroundColor: Colors.blue100, paddingLeft: 12, paddingRight: 12, paddingTop: 22, flex: 1, display: 'flex', flexDirection: 'row', alignItems: 'start', justifyContent: 'space-between' }}>
 
