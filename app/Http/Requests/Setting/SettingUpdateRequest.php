@@ -27,7 +27,8 @@ class SettingUpdateRequest extends FormRequest
             'address' => ['nullable'],
             'phone' => ['nullable', 'numeric'],
             'city_id' => ['nullable'],
-            'timezone' => ['required']
+            'timezone' => ['required'],
+            'setting' => ['required','numeric']
         ];
     }
 
@@ -38,6 +39,7 @@ class SettingUpdateRequest extends FormRequest
             'address' => 'Alamat',
             'phone' => 'Nomor telpon',
             'city_id' => 'Kota',
+            'setting'=> 'Durasi pengambilan'
         ];
     }
 }

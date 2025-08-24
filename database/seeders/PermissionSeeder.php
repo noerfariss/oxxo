@@ -15,10 +15,6 @@ class PermissionSeeder extends Seeder
     public function run(): void
     {
         // ============== AKTIVITAS ==========================
-        Permission::create(['name' => 'CHECKLOG_READ']);
-        Permission::create(['name' => 'CHECKLOG_EDIT']);
-        Permission::create(['name' => 'CHECKLOG_DELETE']);
-
         Permission::create(['name' => 'CASHIER_READ']);
         Permission::create(['name' => 'CASHIER_CREATE']);
         Permission::create(['name' => 'CASHIER_EDIT']);
@@ -56,6 +52,11 @@ class PermissionSeeder extends Seeder
         Permission::create(['name' => 'PRODUCTATTRIBUTE_CREATE']);
         Permission::create(['name' => 'PRODUCTATTRIBUTE_EDIT']);
         Permission::create(['name' => 'PRODUCTATTRIBUTE_DELETE']);
+
+        Permission::create(['name' => 'REMARK_READ']);
+        Permission::create(['name' => 'REMARK_CREATE']);
+        Permission::create(['name' => 'REMARK_EDIT']);
+        Permission::create(['name' => 'REMARK_DELETE']);
 
 
         // ================= PENGATURAN ==================================

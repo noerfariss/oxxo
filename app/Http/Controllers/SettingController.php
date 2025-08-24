@@ -54,7 +54,7 @@ class SettingController extends Controller implements HasMiddleware
         $setting = SettingClass::updatecache();
         $title_page = 'Setting';
 
-        return view('member.setting.edit', compact('setting','title_page'));
+        return view('member.setting.edit', compact('setting', 'title_page'));
     }
 
     /**
@@ -72,7 +72,7 @@ class SettingController extends Controller implements HasMiddleware
     {
         DB::beginTransaction();
         try {
-            Setting::query()->update($request->only(['name',  'address', 'logo', 'email', 'phone', 'timezone', 'city_id']));
+            Setting::query()->update($request->only(['name',  'address', 'logo', 'email', 'phone', 'timezone', 'city_id', 'setting']));
 
             // Log
             LogClass::set('Update setting');

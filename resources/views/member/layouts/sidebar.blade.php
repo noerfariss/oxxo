@@ -82,7 +82,20 @@
 
         @canany(['PRODUCT_READ', 'CATEGORY_READ'])
             <li
-                class="menu-item {{ menuAktif(['product.index', 'product.create', 'product.edit', 'category.index', 'category.create', 'category.edit', 'productattribute.index', 'productattribute.create', 'productattribute.edit']) }}">
+                class="menu-item {{ menuAktif([
+                    'product.index',
+                    'product.create',
+                    'product.edit',
+                    'category.index',
+                    'category.create',
+                    'category.edit',
+                    'productattribute.index',
+                    'productattribute.create',
+                    'productattribute.edit',
+                    'remark.index',
+                    'remark.create',
+                    'remark.edit',
+                ]) }}">
                 <a href="#" class="menu-link menu-toggle">
                     <i class='menu-icon tf-icons bx bx-palette'></i>
                     <div data-i18n="Form Layouts">Data Produk</div>
@@ -107,6 +120,13 @@
                             class="menu-item {{ menuAktif(['productattribute.index', 'productattribute.create', 'productattribute.edit']) }}">
                             <a href="{{ route('productattribute.index') }}" class="menu-link">
                                 <div data-i18n="Horizontal Form">Pengaturan</div>
+                            </a>
+                        </li>
+                    @endcan
+                    @can('REMARK_READ')
+                        <li class="menu-item {{ menuAktif(['remark.index', 'remark.create', 'remark.edit']) }}">
+                            <a href="{{ route('remark.index') }}" class="menu-link">
+                                <div data-i18n="Horizontal Form">Remark</div>
                             </a>
                         </li>
                     @endcan

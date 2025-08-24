@@ -19,7 +19,9 @@ use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProductAttributeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ProductSettingController;
 use App\Http\Controllers\ProfilController;
+use App\Http\Controllers\RemarkController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\UserController;
@@ -57,12 +59,10 @@ Route::middleware('xss')->group(function () {
             Route::get('/report', [OrderController::class, 'report'])->name('report');
             Route::get('/{id}/print', [OrderController::class, 'print'])->name('print');
 
-
             Route::get('/out', [OrderOutController::class, 'index'])->name('out');
             Route::post('/orderout-ajax', [OrderOutController::class, 'ajax'])->name('outajax');
             Route::post('/{id}/masuk', [OrderOutController::class, 'prosesIn'])->name('masuk');
             Route::get('/outreport', [OrderOutController::class, 'report'])->name('outreport');
-
 
             Route::get('/in', [OrderInController::class, 'index'])->name('in');
             Route::post('/orderin-ajax', [OrderInController::class, 'ajax'])->name('inajax');
@@ -110,6 +110,12 @@ Route::middleware('xss')->group(function () {
             Route::post('/category-ajax', [CategoryController::class, 'ajax'])->name('category.ajax');
             Route::resource('productattribute', ProductAttributeController::class);
             Route::post('/productattribute-ajax', [ProductAttributeController::class, 'ajax'])->name('productattribute.ajax');
+
+            Route::resource('remark', RemarkController::class);
+            Route::post('/remark-ajax', [RemarkController::class, 'ajax'])->name('remark.ajax');
+
+
+            Route::get('/setting', [ProductSettingController::class, 'index'])->name('product.setting');
         });
 
         // ======== PENGATURAN ==============================================

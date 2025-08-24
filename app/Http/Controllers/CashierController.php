@@ -41,7 +41,7 @@ class CashierController extends Controller implements HasMiddleware
 
     public function cashier(OutletKios $kios)
     {
-        return view('member.cashier.cashier');
+        return view('member.cashier.cashier', compact('kios'));
     }
 
     public function items(Request $request)

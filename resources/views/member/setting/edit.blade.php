@@ -92,6 +92,16 @@
                                 </div>
                             </div>
 
+                            <hr>
+
+                            <div class="row mb-3">
+                                <label class="col-sm-3 col-form-label" for="nama">Durasi pengambilan</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="setting"
+                                        value="{{ $setting->setting }}">
+                                </div>
+                            </div>
+
                             <div class="row justify-content-end">
                                 <div class="col-sm-9">
                                     <button type="submit" class="btn btn-primary btn-sm">Simpan</button>
@@ -131,7 +141,8 @@
                 <div class="card mb-4">
                     <h5 class="card-header">Ganti Favicon</h5>
                     <div class="card-body">
-                        <form action="{{ route('setting.logo',['setting' => $setting]) }}" method="POST" enctype="multipart/form-data">
+                        <form action="{{ route('setting.logo', ['setting' => $setting]) }}" method="POST"
+                            enctype="multipart/form-data">
                             @csrf
                             @method('PATCH')
 
