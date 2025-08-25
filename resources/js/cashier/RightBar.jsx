@@ -338,6 +338,17 @@ export const RightBar = ({ cart = [], setCart, maxDelivery }) => {
                             <input
                                 type="radio"
                                 name="paymentMethod"
+                                value="card"
+                                checked={information.paymentMethod === "card"}
+                                onChange={(e) => setPaymentMethod(e.target.value)}
+                            />{" "}
+                            Card
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="paymentMethod"
                                 value="ppc"
                                 checked={information.paymentMethod === "ppc"}
                                 disabled={Number(information.memberSaldo) < grandTotal}

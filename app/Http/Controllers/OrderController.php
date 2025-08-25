@@ -95,15 +95,27 @@ class OrderController extends Controller
 
         $grandTotal = collect($orders)->sum('grandtotal');
 
+        // total by payment method
+        $totalPayment = collect($orders) // $orders dari query kamu
+            ->groupBy('payment_method')
+            ->map(function ($group) {
+                return [
+                    'count'      => $group->count(),
+                    'total'      => $group->sum(fn($item) => (float) $item['grandtotal']),
+                    'orders'     => $group, // kalau mau lihat detail tiap order
+                ];
+            });
+
         // Load view untuk report pdf, kirim data orders dan tanggal
         $pdf = Pdf::loadView('member.order.orderpdf', [
             'orders' => $orders,
+            'totalPayments' => $totalPayment,
             'startDate' => $dates[0],
             'endDate' => $dates[1],
             'numClients' => $numClients,
             'numPcs' => $numPcs,
             'grandTotal' => $grandTotal,
-            // 'logo' =>
+            'type' => $type,
             'title' => $request->type == strtolower(OrderEnum::OUT->label()) ? 'Report Pickup (Barang Keluar)' : 'Report Drop Off (Barang Masuk)',
         ]);
 

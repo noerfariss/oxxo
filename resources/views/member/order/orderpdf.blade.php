@@ -55,6 +55,7 @@
                 <th style="text-align: center;">Items</th>
                 <th style="text-align: right;">Grandtotal</th>
                 <th>Date Input</th>
+                <th>Payment</th>
             </tr>
         </thead>
         <tbody>
@@ -66,10 +67,12 @@
                     <td style="text-align: center;">{{ collect($order->products)->sum('quantity') }}</td>
                     <td style="text-align: right;">Rp {{ number_format($order->grandtotal) }}</td>
                     <td>{{ $order->created_at }}</td>
+                    <td style="text-transform:uppercase">{{ $order->payment_method }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
 
     <br><br>
     <table border="0">
@@ -91,6 +94,80 @@
             </tr>
         </tbody>
     </table>
+
+    @if ($type == 1)
+        <br><br>
+        <table border="0">
+            <tbody>
+                <tr>
+                    <td>Total</td>
+                    <td>Cash</td>
+                    <td>:</td>
+                    <td>Rp {{ isset($totalPayments['cash']) ? number_format($totalPayments['cash']['total']) : 0 }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Card</td>
+                    <td>:</td>
+                    <td>Rp {{ isset($totalPayments['card']) ? number_format($totalPayments['card']['total']) : 0 }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>PPC</td>
+                    <td>:</td>
+                    <td>Rp {{ isset($totalPayments['ppc']) ? number_format($totalPayments['ppc']['total']) : 0 }}</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>OUTSTANDING</td>
+                    <td>:</td>
+                    <td>Rp {{ isset($totalPayments['outstanding']) ? number_format($totalPayments['outstanding']['total']) : 0 }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+    @else
+
+        <br><br>
+        <table border="0">
+            <tbody>
+                <tr>
+                    <td>Total</td>
+                    <td>Cash</td>
+                    <td>:</td>
+                    <td>Rp 0</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Card</td>
+                    <td>:</td>
+                    <td>Rp 0</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Cash* (Awal)</td>
+                    <td>:</td>
+                    <td>Rp {{ isset($totalPayments['cash']) ? number_format($totalPayments['cash']['total']) : 0 }}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>Card* (Awal)</td>
+                    <td>:</td>
+                    <td>Rp {{ isset($totalPayments['card']) ? number_format($totalPayments['card']['total']) : 0 }}
+                    </td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>PPC* (Awal)</td>
+                    <td>:</td>
+                    <td>Rp {{ isset($totalPayments['ppc']) ? number_format($totalPayments['ppc']['total']) : 0 }}</td>
+                </tr>
+            </tbody>
+        </table>
+    @endif
+
+
 
 </body>
 
