@@ -5,8 +5,11 @@ import { CalendarOutlined, DeleteOutlined, PercentageOutlined, RightCircleTwoTon
 import axios from 'axios'
 import { getSlug } from '../utils/Helper'
 import CustomerSelect from '../components/CustomerSelect'
+import dayjs from 'dayjs'
 
-export const RightBar = ({ cart = [], setCart }) => {
+export const RightBar = ({ cart = [], setCart, maxDelivery }) => {
+    console.log(maxDelivery);
+
     const [api, contextHolder] = notification.useNotification();
     const baseUrl = import.meta.env.VITE_APP_URL;
     const [open, setOpen] = useState(false);
@@ -28,15 +31,16 @@ export const RightBar = ({ cart = [], setCart }) => {
     }, 0);
 
     const [information, setInformation] = useState({
+        typeDiskon: 'persen',
         diskon: 0,
-        pickup: '-',
+        pickup: dayjs().add(maxDelivery ? maxDelivery : 1, 'day').format('YYYY-MM-DD'),
         member: '',
         memberID: '',
         memberSaldo: '',
     });
 
     const diskonPersen = Number(information.diskon) || 0;
-    const diskonRupiah = (diskonPersen / 100) * subtotal;
+    const diskonRupiah = information.typeDiskon == 'persen' ? (diskonPersen / 100) * subtotal : diskonPersen;
     const grandTotal = subtotal - diskonRupiah;
 
     const setDatePickup = (date, datestring) => {
@@ -53,6 +57,15 @@ export const RightBar = ({ cart = [], setCart }) => {
             return ({
                 ...prev,
                 diskon: val
+            })
+        })
+    }
+
+    const setTypeDiskon = (val) => {
+        setInformation((prev) => {
+            return ({
+                ...prev,
+                typeDiskon: val
             })
         })
     }
@@ -81,6 +94,7 @@ export const RightBar = ({ cart = [], setCart }) => {
                 slug: slug,
                 member: information.memberID,
                 discount: information.diskon,
+                typeDiskon: information.typeDiskon
 
             }, {
                 headers: {
@@ -197,8 +211,8 @@ export const RightBar = ({ cart = [], setCart }) => {
                             <h6 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'bold' }}>Rp {subtotal}</h6>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
-                            <h4 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'normal', letterSpacing: .5 }}><PercentageOutlined /> Diskon</h4>
-                            <h6 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'bold' }}>{information.diskon}%</h6>
+                            <h4 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'normal', letterSpacing: .5 }}>Diskon {information.typeDiskon == 'persen' ? information.diskon + '%' : '(Rupiah)'}</h4>
+                            <h6 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'bold' }}>{diskonRupiah}</h6>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
                             <h4 style={{ margin: 0, padding: 0, color: Colors.gray50, fontWeight: 'normal', letterSpacing: .5 }}><CalendarOutlined /> Diambil pada tanggal</h4>
@@ -237,12 +251,36 @@ export const RightBar = ({ cart = [], setCart }) => {
                     open={open}
                 >
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
-                        <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}><PercentageOutlined /> Diskon</h4>
+                        <h4 style={{ margin: 0, padding: 0, letterSpacing: .5, fontWeight: 'bold' }}>Diskon</h4>
+                        <div style={{ display: 'flex', flexDirection: 'row', gap: 12, marginBottom: 16 }}>
+                            <label style={{ marginRight: 12 }}>
+                                <input
+                                    type="radio"
+                                    name="diskonType"
+                                    value="persen"
+                                    checked={information.typeDiskon === "persen"}
+                                    onChange={(e) => setTypeDiskon(e.target.value)}
+                                />
+                                {" "}Persen (%)
+                            </label>
+
+                            <label>
+                                <input
+                                    type="radio"
+                                    name="diskonType"
+                                    value="nominal"
+                                    checked={information.typeDiskon === "nominal"}
+                                    onChange={(e) => setTypeDiskon(e.target.value)}
+                                />
+                                {" "}Rupiah (Rp)
+                            </label>
+                        </div>
+
                         <input type='text' defaultValue={information.diskon} onChange={(e) => setDiskon(e.target.value)} />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
                         <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}><CalendarOutlined /> Diambil pada tanggal</h4>
-                        <DatePicker onChange={setDatePickup} />
+                        <DatePicker onChange={setDatePickup} defaultValue={dayjs().add(maxDelivery ? maxDelivery : 1, 'day')} />
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 8, paddingTop: 8 }}>
                         <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}><UserOutlined /> Customer</h4>
@@ -273,7 +311,7 @@ export const RightBar = ({ cart = [], setCart }) => {
                                             <h5 style={{ margin: 0, padding: 0, fontWeight: 'bold', fontSize: 11, letterSpacing: .5 }}>{val.category}</h5>
                                             <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}>{val.name}</h4>
                                             <div style={{ fontSize: 11, fontStyle: 'italic' }}>- Rp {val.price}</div>
-                                            <div style={{ fontSize: 11, fontStyle: 'italic' }}>- Uk. 2 x 3.2 Meter</div>
+                                            <div style={{ fontSize: 11, fontStyle: 'italic' }}>- {val.noted}</div>
                                         </div>
                                         <div style={{ backgroundColor: Colors.yellow, width: 20, height: 20, fontSize: 14, fontWeight: 'bold', textAlign: "center", borderRadius: 10, marginTop: 18 }}>{val.quantity}</div>
                                         <div style={{ textAlign: 'right', flex: 1 }}>
@@ -292,8 +330,8 @@ export const RightBar = ({ cart = [], setCart }) => {
                             <h6 style={{ margin: 0, padding: 0, fontWeight: 'bold' }}>Rp {subtotal}</h6>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', borderBottomWidth: 1, borderBottomStyle: 'dashed', borderColor: Colors.gray100, paddingBottom: 1, paddingTop: 2 }}>
-                            <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}><PercentageOutlined /> Diskon</h4>
-                            <h6 style={{ margin: 0, padding: 0, fontWeight: 'bold' }}>{information.diskon}%</h6>
+                            <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}>Diskon {information.typeDiskon == 'persen' ? information.diskon + '%' : '(Rupiah)'}</h4>
+                            <h6 style={{ margin: 0, padding: 0, fontWeight: 'bold' }}>{diskonRupiah}</h6>
                         </div>
                         <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 1, paddingTop: 2 }}>
                             <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}>Total</h4>

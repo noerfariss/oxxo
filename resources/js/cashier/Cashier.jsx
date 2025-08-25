@@ -18,8 +18,28 @@ export default function Cashier() {
     const [items, setItems] = useState([]);
     const [categories, setCategories] = useState([]);
     const [remarks, setRemarks] = useState([]);
+    const [maxDelivery, setMaxDelivery] = useState(null);
 
     const [cart, setCart] = useState([]);
+
+    const getSetting = async () => {
+        try {
+            const req = await axios.get(`${baseUrl}/auth/cashier/setting`, {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            const res = await req.data;
+            const data = res.data;
+            setMaxDelivery(data.setting);
+
+        } catch (error) {
+            console.log(error);
+
+        }
+    }
 
     const getRemarks = async () => {
         try {
@@ -109,6 +129,7 @@ export default function Cashier() {
     useEffect(() => {
         getCategories();
         getRemarks();
+        getSetting();
     }, [])
 
     useEffect(() => {
@@ -132,7 +153,7 @@ export default function Cashier() {
                     </div>
                 </Col>
                 <Col xs={24} md={8} xl={6}>
-                    <RightBar cart={cart} setCart={(e) => setCart(e)} />
+                    <RightBar cart={cart} setCart={(e) => setCart(e)} maxDelivery={maxDelivery} />
                 </Col>
             </Row>
         </Layout>

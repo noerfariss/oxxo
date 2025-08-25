@@ -11,6 +11,7 @@ use App\Models\Order;
 use App\Models\OutletKios;
 use App\Models\Product;
 use App\Models\Remark;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
@@ -114,12 +115,21 @@ class CashierController extends Controller implements HasMiddleware
         return ResponseClass::success(data: $data);
     }
 
+    public function setting()
+    {
+        $data = Setting::query()
+            ->first();
+
+        return ResponseClass::success(data: $data);
+    }
+
     public function save(Request $request)
     {
         $slug = $request->slug;
         $cart = $request->cart;
         $member = $request->member;
         $discount = $request->discount;
+        $typeDiskon = $request->typeDiskon;
         $membertext = Member::find($member);
 
         $kios = OutletKios::where('uuid', $slug)->first();
@@ -127,7 +137,10 @@ class CashierController extends Controller implements HasMiddleware
         $productId = collect($cart)->pluck('id')->toArray();
 
         $subtotal = collect($cart)->sum('subtotal');
-        $discountrupiah = (int) $discount > 0 ? ($discount / 100) * $subtotal : 0;
+        $discountrupiah = $typeDiskon == 'persen'
+            ? ((int) $discount > 0 ? ($discount / 100) * $subtotal : 0)
+            : (int) $discount;
+
         $grandtotal = $subtotal - $discountrupiah;
 
         DB::beginTransaction();
@@ -141,6 +154,7 @@ class CashierController extends Controller implements HasMiddleware
                 'member_id' => $member,
                 'membertext' => $membertext,
                 'subtotal' => $subtotal,
+                'discount_type' => $typeDiskon,
                 'discount' => $discount,
                 'grandtotal' => $grandtotal
             ]);

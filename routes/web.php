@@ -76,6 +76,7 @@ Route::middleware('xss')->group(function () {
             Route::post('/items', [CashierController::class, 'items'])->name('cashier.items');
             Route::get('/categories', [CashierController::class, 'categories'])->name('cashier.categories');
             Route::get('/remaks', [CashierController::class, 'remaks'])->name('cashier.remaks');
+            Route::get('/setting', [CashierController::class, 'setting'])->name('cashier.setting');
             Route::post('/process', [CashierController::class, 'save'])->name('cashier.process');
             Route::get('/customers', [CashierController::class, 'customers'])->name('cashier.customers');
         })->middleware([HandlePrecognitiveRequests::class]);

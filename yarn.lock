@@ -1641,7 +1641,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dayjs@npm:^1.11.11":
+"dayjs@npm:^1.11.11, dayjs@npm:^1.11.13":
   version: 1.11.13
   resolution: "dayjs@npm:1.11.13"
   checksum: 10c0/a3caf6ac8363c7dade9d1ee797848ddcf25c1ace68d9fe8678ecf8ba0675825430de5d793672ec87b24a69bf04a1544b176547b2539982275d5542a7955f35b7
@@ -3578,6 +3578,7 @@ __metadata:
     antd: "npm:^5.26.0"
     axios: "npm:^1.8.2"
     concurrently: "npm:^9.0.1"
+    dayjs: "npm:^1.11.13"
     laravel-precognition-react: "npm:^0.7.2"
     laravel-vite-plugin: "npm:^1.2.0"
     react: "npm:^19.1.0"

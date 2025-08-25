@@ -17,6 +17,7 @@
     "dependencies": {
         "@ant-design/icons": "5.x",
         "antd": "^5.26.0",
+        "dayjs": "^1.11.13",
         "laravel-precognition-react": "^0.7.2",
         "react": "^19.1.0",
         "react-dom": "^19.1.0",
