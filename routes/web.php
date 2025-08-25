@@ -60,9 +60,9 @@ Route::middleware('xss')->group(function () {
             Route::get('/{id}/print', [OrderController::class, 'print'])->name('print');
 
             Route::get('/out', [OrderOutController::class, 'index'])->name('out');
-            Route::post('/orderout-ajax', [OrderOutController::class, 'ajax'])->name('outajax');
-            Route::post('/{id}/masuk', [OrderOutController::class, 'prosesIn'])->name('masuk');
-            Route::get('/outreport', [OrderOutController::class, 'report'])->name('outreport');
+            // Route::post('/orderout-ajax', [OrderOutController::class, 'ajax'])->name('outajax');
+            // Route::post('/{id}/masuk', [OrderOutController::class, 'prosesIn'])->name('masuk');
+            // Route::get('/outreport', [OrderOutController::class, 'report'])->name('outreport');
 
             Route::get('/in', [OrderInController::class, 'index'])->name('in');
             Route::post('/orderin-ajax', [OrderInController::class, 'ajax'])->name('inajax');

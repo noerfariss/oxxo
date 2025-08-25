@@ -126,7 +126,7 @@
                     data: 'grandtotal',
                 },
                 {
-                    data: 'payment',
+                    data: 'payment_method',
                 },
                 {
                     data: 'created_at'
