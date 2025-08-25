@@ -8,8 +8,6 @@ import CustomerSelect from '../components/CustomerSelect'
 import dayjs from 'dayjs'
 
 export const RightBar = ({ cart = [], setCart, maxDelivery }) => {
-    console.log(maxDelivery);
-
     const [api, contextHolder] = notification.useNotification();
     const baseUrl = import.meta.env.VITE_APP_URL;
     const [open, setOpen] = useState(false);
@@ -37,6 +35,7 @@ export const RightBar = ({ cart = [], setCart, maxDelivery }) => {
         member: '',
         memberID: '',
         memberSaldo: '',
+        paymentMethod: 'cash'
     });
 
     const diskonPersen = Number(information.diskon) || 0;
@@ -70,6 +69,13 @@ export const RightBar = ({ cart = [], setCart, maxDelivery }) => {
         })
     }
 
+    const setPaymentMethod = (val) => {
+        setInformation((prev) => ({
+            ...prev,
+            paymentMethod: val
+        }));
+    };
+
     const setSelectedCustomer = (data) => {
         setInformation((prev) => {
 
@@ -94,7 +100,8 @@ export const RightBar = ({ cart = [], setCart, maxDelivery }) => {
                 slug: slug,
                 member: information.memberID,
                 discount: information.diskon,
-                typeDiskon: information.typeDiskon
+                typeDiskon: information.typeDiskon,
+                paymentMethod: information.paymentMethod
 
             }, {
                 headers: {
@@ -196,6 +203,11 @@ export const RightBar = ({ cart = [], setCart, maxDelivery }) => {
                     }
                 </section>
 
+
+
+
+
+
                 {/* --------------- tombol & footer ------------------- */}
                 <section>
                     <h3 style={{ fontWeight: 500, color: Colors.yellow, letterSpacing: .5, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -243,6 +255,11 @@ export const RightBar = ({ cart = [], setCart, maxDelivery }) => {
                     </button>
                 </section>
 
+
+
+
+
+
                 {/* sidebar detail informasi (diskon, customer, tgl diambil) */}
                 <Drawer
                     title='Informasi'
@@ -289,6 +306,56 @@ export const RightBar = ({ cart = [], setCart, maxDelivery }) => {
                         {
                             information.memberSaldo !== '' && <h6>Saldo: Rp {information.memberSaldo}</h6>
                         }
+                    </div>
+                    <div
+                        style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            justifyContent: 'space-between',
+                            borderBottomWidth: 1,
+                            borderBottomStyle: 'dashed',
+                            borderColor: Colors.gray100,
+                            paddingBottom: 8,
+                            paddingTop: 8
+                        }}
+                    >
+                        <h4 style={{ margin: 0, padding: 0, fontWeight: 'normal', letterSpacing: .5 }}>
+                            Metode Pembayaran
+                        </h4>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="paymentMethod"
+                                value="cash"
+                                checked={information.paymentMethod === "cash"}
+                                onChange={(e) => setPaymentMethod(e.target.value)}
+                            />{" "}
+                            Cash
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="paymentMethod"
+                                value="ppc"
+                                checked={information.paymentMethod === "ppc"}
+                                disabled={Number(information.memberSaldo) < grandTotal}
+                                onChange={(e) => setPaymentMethod(e.target.value)}
+                            />{" "}
+                            Saldo Member {information.memberSaldo && `(Rp ${information.memberSaldo})`}
+                        </label>
+
+                        <label>
+                            <input
+                                type="radio"
+                                name="paymentMethod"
+                                value="outstanding"
+                                checked={information.paymentMethod === "outstanding"}
+                                onChange={(e) => setPaymentMethod(e.target.value)}
+                            />{" "}
+                            Bayar Waktu Diambil
+                        </label>
                     </div>
                 </Drawer>
 

@@ -173,7 +173,7 @@
                     <tr>
                         <td class="col-form-label">pembayaran</td>
                         <td>:</td>
-                        <td>${data.payment}</td>
+                        <td>${data.payment_method.toUpperCase()}</td>
                     </tr>
                     <tr>
                         <td class="col-form-label">dibuat</td>

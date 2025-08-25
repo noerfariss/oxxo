@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Class\DepositClass;
 use App\Class\OrderClass;
 use App\Class\ResponseClass;
+use App\Enums\DepositEnum;
 use App\Models\Category;
+use App\Models\Deposit;
 use App\Models\Member;
 use App\Models\Order;
 use App\Models\OutletKios;
@@ -13,6 +15,7 @@ use App\Models\Product;
 use App\Models\Remark;
 use App\Models\Setting;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -143,6 +146,8 @@ class CashierController extends Controller implements HasMiddleware
 
         $grandtotal = $subtotal - $discountrupiah;
 
+        $paymentMethod = $request->paymentMethod;
+
         DB::beginTransaction();
         try {
             Order::create([
@@ -156,8 +161,19 @@ class CashierController extends Controller implements HasMiddleware
                 'subtotal' => $subtotal,
                 'discount_type' => $typeDiskon,
                 'discount' => $discount,
-                'grandtotal' => $grandtotal
+                'grandtotal' => $grandtotal,
+                'payment_method' => $paymentMethod,
             ]);
+
+            if($paymentMethod === 'ppc'){
+                Deposit::create([
+                    'dates' => Carbon::now(),
+                    'member_id' => $member,
+                    'type' => DepositEnum::OUT->value,
+                    'amount' => $grandtotal,
+                    'note' => 'Pembayaran'
+                ]);
+            }
 
             DB::commit();
 
