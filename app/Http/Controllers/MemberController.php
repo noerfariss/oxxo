@@ -43,6 +43,7 @@ class MemberController extends Controller implements HasMiddleware
     {
         $cari = $request->cari;
         $office = $request->office;
+        $membertype = $request->member_filter;
 
         $data = Member::query()
             ->when($cari, function ($e, $cari) {
@@ -51,6 +52,7 @@ class MemberController extends Controller implements HasMiddleware
                         ->orWhere('numberid', 'like', '%' . $cari . '%');
                 });
             })
+            ->when($membertype, fn($e) => $e->whereIn('is_member', $membertype))
             ->where('status', cekStatus($request->status));
 
         return DataTables::eloquent($data)

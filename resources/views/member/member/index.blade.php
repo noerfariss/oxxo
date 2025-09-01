@@ -26,19 +26,29 @@
                     <div class="col-sm-3 mt-2">
                         <input type="text" id="cari" class="form-control" placeholder="Cari...">
                     </div>
-                    <div class="col-sm-1 mt-2">
+                    <div class="col-sm-3 mt-2">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input member-filter" type="checkbox" id="filterMember" value="1">
+                            <label class="form-check-label" for="filterMember">Member</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input member-filter" type="checkbox" id="filterNonMember"
+                                value="0">
+                            <label class="form-check-label" for="filterNonMember">Non Member</label>
+                        </div>
 
                     </div>
-                    <div class="col-sm-8 mt-2">
+                    <div class="col-sm-6 mt-2">
                         @haspermission('MEMBER_CREATE')
                             <div class="d-flex justify-content-end gap-3">
-                                <a href="{{ route('member.create') }}" class="btn btn-sm btn-outline-primary ">
+                                <a href="{{ route('member.create') }}" class="btn btn-sm btn-outline-primary">
                                     <i class='bx bx-plus'></i> tambah
                                 </a>
                             </div>
                         @endhaspermission
                     </div>
                 </div>
+
             </div>
 
             <table class="table table-hover display nowrap noscroll mb-4" id="datatable">
@@ -114,6 +124,10 @@
                     d.office = $('#office_filter').val();
                     d.division = $('#division_filter').val();
                     d.position = $('#position_filter').val();
+                    // kirim array filter checkbox
+                    d.member_filter = $('.member-filter:checked').map(function() {
+                        return $(this).val();
+                    }).get();
                 },
             },
             columns: [{
@@ -122,7 +136,7 @@
                 {
                     data: 'namestring',
                     name: 'name',
-                    render: function(data, type, row){
+                    render: function(data, type, row) {
                         return `${row.namestring} <br> ${row.memberstring}`;
                     }
                 },
@@ -145,6 +159,11 @@
         $('#cari').keyup(function() {
             datatables.search($('#cari').val()).draw();
         });
+
+        $('.member-filter').change(function() {
+            datatables.ajax.reload();
+        });
+
 
         $('#datatable tbody').on('click', 'tr td:not(:last-child)', function() {
             const data = datatables.row(this).data();
