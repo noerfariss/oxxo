@@ -2,7 +2,7 @@
 
 @section('konten')
     <div class="container-xxl flex-grow-1 container-p-y">
-         <div class="row">
+        <div class="row">
             <div class="col-sm-12">
                 <x-member.report-navigation />
             </div>
@@ -61,6 +61,7 @@
                     <tr>
                         <th>id</th>
                         <th>nama</th>
+                        <th>phone</th>
                         <th>tanggal lahir</th>
                         <th>alamat</th>
                         <th>status</th>
@@ -144,6 +145,9 @@
                     render: function(data, type, row) {
                         return `${row.namestring} <br> ${row.memberstring}`;
                     }
+                },
+                {
+                    data: 'phone',
                 },
                 {
                     data: 'born',

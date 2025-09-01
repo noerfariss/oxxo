@@ -26,10 +26,10 @@
                 @endif
 
                 <div class="row">
-                    <div class="col-sm-4 mt-2">
+                    <div class="col-sm-3 mt-2">
                         <input type="text" class="form-control" id="tanggal">
                     </div>
-                    <div class="col-sm-2 mt-2">
+                    <div class="col-sm-3 mt-2">
                         <input type="text" id="cari" class="form-control" placeholder="Cari...">
                     </div>
                     <div class="col-sm-2 mt-2">
@@ -108,10 +108,10 @@
                     data: 'numberid'
                 },
                 {
-                    data: 'membertext',
-                    render: function(data) {
-                        return data.name
-                    }
+                    data: 'memberstring',
+                    // render: function(data) {
+                    //     return data.name
+                    // }
                 },
                 {
                     data: 'kiostext',
@@ -141,8 +141,7 @@
         $('#datatable tbody').on('click', 'tr td', function() {
             const data = datatables.row(this).data();
 
-            // console.log(data);
-
+            console.log(data);
 
             $('#modalDetailTable').modal('show');
             $('#modalDetailTableLabel').text('Data Order');
@@ -155,10 +154,20 @@
                         <td>:</td>
                         <td>${data.numberid}</td>
                     </tr>
-                     <tr>
+                    <tr>
                         <td class="col-form-label">customer</td>
                         <td>:</td>
                         <td>${data.membertext.name}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-form-label">phone</td>
+                        <td>:</td>
+                        <td>${data.membertext.phone}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-form-label">alamat</td>
+                        <td>:</td>
+                        <td>${data.membertext.address}</td>
                     </tr>
                     <tr>
                         <td class="col-form-label">kios</td>

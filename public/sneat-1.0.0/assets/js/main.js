@@ -263,6 +263,42 @@ $(document).ready(function () {
                 }
             }
         }
+    })
+    .on('select2:select', function(){
+        $('#kios_id').removeAttr('disabled');
+    });
+
+    // --- biasa
+    $('.kios-select').select2({
+        placeholder: " - Kios -",
+        allowClear: true,
+        ajax: {
+            type: 'POST',
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    term: params.term,
+                    office: $('#office_id').val(),
+                    _token: $('input[name="_token"]').val(),
+                }
+            },
+            processResults: function (data) {
+                const status = data.status;
+
+                if (status == true) {
+                    const record = data.data;
+
+                    return {
+                        results: $.map(record, function (item) {
+                            return {
+                                id: item.id,
+                                text: item.label,
+                            }
+                        }),
+                    };
+                }
+            }
+        }
     });
 
     // --- biasa

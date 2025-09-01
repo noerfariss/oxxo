@@ -18,14 +18,30 @@ class OrderController extends Controller
 
     public function ajax(Request $request)
     {
+        $search = $request->cari;
         $type = $request->type == 'out' ? OrderEnum::OUT->value : OrderEnum::NEW->value;
         $dates = pecahTanggal($request->dates);
 
         $data = Order::query()
+            ->when($search, function ($e, $search) {
+                $e->where(function ($e) use ($search) {
+                    $e->where('membertext->name', 'like', "%{$search}%")
+                        ->orWhere('membertext->phone', 'like', "%{$search}%")
+                        ->orWhere('membertext->address', 'like', "%{$search}%");
+                });
+            })
             ->where('status', $type)
             ->whereBetween('created_at', [$dates[0] . ' 00:00:00', $dates[1] . ' 23:59:59']);
 
         return DataTables::eloquent($data)
+            ->addColumn('memberstring', function ($e) {
+                $member = $e->membertext;
+                $name = $member->name;
+                $phone = $member->phone;
+                $address = $member->address;
+
+                return $name . ' - ' . $phone . '<br/><small>' . $address.'</small>';
+            })
             ->addColumn('product_count', fn($e) => count($e->product_id))
             ->addColumn('subtotaltext', fn($e) => 'Rp ' . number_format($e->subtotal))
             ->editColumn('grandtotal', fn($e) => 'Rp ' . number_format($e->grandtotal))
@@ -46,7 +62,7 @@ class OrderController extends Controller
                     return '';
                 }
             })
-            // ->rawColumns(['aksi'])
+            ->rawColumns(['memberstring'])
             ->make(true);
     }
 

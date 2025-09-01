@@ -48,8 +48,9 @@ class MemberController extends Controller implements HasMiddleware
         $data = Member::query()
             ->when($cari, function ($e, $cari) {
                 $e->where(function ($e) use ($cari) {
-                    $e->where('name', 'like', '%' . $cari . '%')
-                        ->orWhere('numberid', 'like', '%' . $cari . '%');
+                    $e->where('name', 'like', "%{$cari}%")
+                        ->orWhere('numberid', 'like', "%{$cari}%")
+                        ->orWhere('phone', 'like', "%{$cari}%");
                 });
             })
             ->when($membertype, fn($e) => $e->whereIn('is_member', $membertype))
@@ -103,7 +104,7 @@ class MemberController extends Controller implements HasMiddleware
     {
         DB::beginTransaction();
         try {
-            $member = Member::create($request->only(['office_id', 'numberid', 'name', 'phone', 'address', 'born', 'city_id', 'gender', 'password', 'is_member']));
+            $member = Member::create($request->only(['office_id', 'kios_id', 'numberid', 'name', 'phone', 'address', 'born', 'city_id', 'gender', 'password', 'is_member']));
 
             LogClass::set('Created member: ' . $request->name);
 
@@ -142,10 +143,9 @@ class MemberController extends Controller implements HasMiddleware
      */
     public function update(MemberUpdateRequest $request, Member $member)
     {
-        // dd($request->all());
         DB::beginTransaction();
         try {
-            $member->update($request->only(['office_id', 'numberid', 'name', 'phone', 'address', 'born', 'city_id', 'gender', 'is_member', 'status']));
+            $member->update($request->only(['office_id', 'kios_id', 'numberid', 'name', 'phone', 'address', 'born', 'city_id', 'gender', 'is_member', 'status']));
             LogClass::set('Updated member: ' . $request->name);
 
             DB::commit();

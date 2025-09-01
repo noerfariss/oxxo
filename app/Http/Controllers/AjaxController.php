@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\City;
 use App\Models\District;
 use App\Models\Office;
+use App\Models\OutletKios;
 use App\Models\State;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -100,6 +101,32 @@ class AjaxController extends Controller
             ->when($term, function ($e, $term) {
                 $e->where('name', 'like', '%' . $term . '%');
             })
+            ->where('status', true)
+            ->select('id', 'name as label');
+
+        if ($data->count() > 0) {
+            return response()->json([
+                'data'  => $data->get(),
+                'status' => true
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'data'  => null,
+            ]);
+        }
+    }
+
+    public function kios(Request $request)
+    {
+        $term = $request->term;
+        $office = $request->office;
+
+        $data = OutletKios::query()
+            ->when($term, function ($e, $term) {
+                $e->where('name', 'like', '%' . $term . '%');
+            })
+            ->where('office_id', $office)
             ->where('status', true)
             ->select('id', 'name as label');
 

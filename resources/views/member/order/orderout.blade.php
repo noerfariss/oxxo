@@ -109,10 +109,10 @@
                     data: 'numberid'
                 },
                 {
-                    data: 'membertext',
-                    render: function(data) {
-                        return data.name
-                    }
+                    data: 'memberstring',
+                    // render: function(data) {
+                    //     return data.name
+                    // }
                 },
                 {
                     data: 'kiostext',
@@ -153,10 +153,20 @@
                         <td>:</td>
                         <td>${data.numberid}</td>
                     </tr>
-                     <tr>
+                    <tr>
                         <td class="col-form-label">customer</td>
                         <td>:</td>
                         <td>${data.membertext.name}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-form-label">phone</td>
+                        <td>:</td>
+                        <td>${data.membertext.phone}</td>
+                    </tr>
+                    <tr>
+                        <td class="col-form-label">alamat</td>
+                        <td>:</td>
+                        <td>${data.membertext.address}</td>
                     </tr>
                     <tr>
                         <td class="col-form-label">kios</td>

@@ -157,6 +157,7 @@ Route::middleware('xss')->group(function () {
         Route::post('/district', [AjaxController::class, 'district'])->name('drop-district');
         Route::post('/minutes', [AjaxController::class, 'minutes'])->name('drop-minutes');
         Route::post('/office', [AjaxController::class, 'office'])->name('drop-office');
+        Route::post('/kios', [AjaxController::class, 'kios'])->name('drop-kios');
         Route::post('/category', [AjaxController::class, 'category'])->name('drop-category');
     });
 });

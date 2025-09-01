@@ -24,9 +24,10 @@ class MemberUpdateRequest extends FormRequest
     {
         return [
             'office_id' => ['required'],
+            'kios_id' => ['required'],
             'name' => ['required'],
             'phone' => ['required', 'numeric', Rule::unique('members')->ignore($this->member)],
-            'born' => ['required', 'date'],
+            'born' => ['nullable', 'date'],
             'address' => ['required', 'min:3'],
             'city_id' => ['nullable'],
             'gender' => ['required'],
@@ -48,6 +49,7 @@ class MemberUpdateRequest extends FormRequest
             'phone' => 'Whatsapp',
             'gender' => 'Jenis kelamin',
             'office_id' => 'Outlet',
+            'kios_id' => 'Kios',
             'address' => 'Alamat'
         ];
     }

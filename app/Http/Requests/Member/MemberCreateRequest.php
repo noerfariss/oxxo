@@ -29,9 +29,10 @@ class MemberCreateRequest extends FormRequest
     {
         return [
             'office_id' => ['required'],
+            'kios_id' => ['required'],
             'name' => ['required'],
             'phone' => ['required', 'numeric', Rule::unique('members', 'phone')],
-            'born' => ['required', 'date'],
+            'born' => ['nullable', 'date'],
             'address' => ['required', 'min:3'],
             'city_id' => ['nullable'],
             'gender' => ['required'],
@@ -54,6 +55,7 @@ class MemberCreateRequest extends FormRequest
             'phone' => 'Whatsapp',
             'gender' => 'Jenis kelamin',
             'office_id' => 'Outlet',
+            'kios_id' => 'Kios',
             'address' => 'Alamat'
         ];
     }

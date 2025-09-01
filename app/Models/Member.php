@@ -54,6 +54,11 @@ class Member extends Authenticable implements JWTSubject
         return $this->belongsTo(Office::class, 'office_id');
     }
 
+    public function kios()
+    {
+        return $this->belongsTo(OutletKios::class, 'kios_id');
+    }
+
     public function city()
     {
         return $this->belongsTo(City::class, 'city_id');

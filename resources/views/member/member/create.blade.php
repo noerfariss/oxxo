@@ -32,6 +32,14 @@
                             </div>
 
                             <div class="row mb-2">
+                                <label class="col-sm-3 col-form-label">Kios</label>
+                                <div class="col-sm-9">
+                                    <select name="kios_id" id="kios_id" class="form-control kios-select" disabled
+                                        data-ajax--url="{{ route('drop-kios') }}"></select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
                                 <label class="col-sm-3 col-form-label">Nama</label>
                                 <div class="col-sm-9">
                                     <input type="text" class="form-control" name="name">
