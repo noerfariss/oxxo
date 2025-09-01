@@ -1,25 +1,58 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>Invoice {{ $order->numberid }}</title>
     <style>
-        body {
-            font-family: monospace;
-            font-size: 12px;
-            width: 80mm;
-            margin: auto;
+        @page {
+            size: 120mm auto;
+            /* kertas 12 cm */
+            margin: 0;
         }
-        .center { text-align: center; }
-        .right { text-align: right; }
-        .bold { font-weight: bold; }
-        table { width: 100%; border-collapse: collapse; }
-        td, th { padding: 2px 0; }
-        hr { border: none; border-top: 1px dashed #000; margin: 5px 0; }
+
+        body {
+            font-family: "Courier New", Courier, monospace;
+            font-size: 14px;
+            /* 👉 ubah jadi 14px (bisa 16px kalau masih kecil) */
+            width: 120mm;
+            margin: 0 auto;
+            letter-spacing: 0.9px;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+        }
+
+        .bold {
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td,
+        th {
+            padding: 3px 0;
+        }
+
+        /* padding diperbesar biar lebih lega */
+        hr {
+            border: none;
+            border-top: 1px dashed #000;
+            margin: 6px 0;
+        }
     </style>
 </head>
+
 <body onload="window.print()">
     <div class="center">
-        <div class="bold" style="font-size: 14px;">OXXO Care Cleaners</div>
+        <div class="bold" style="font-size: 22px; margin-top:8mm">OXXO Care Cleaners</div>
         <div>{{ $order->kiostext->name }}</div>
         <div>{{ $order->kiostext->address }}</div>
         <hr>
@@ -40,7 +73,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach($order->products as $item)
+            @foreach ($order->products as $item)
                 <tr>
                     <td>{{ $item->quantity }}</td>
                     <td>
@@ -79,4 +112,5 @@
         <div>Barang telah dicek dan dikemas dengan baik.</div>
     </div>
 </body>
+
 </html>
