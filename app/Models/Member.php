@@ -73,6 +73,15 @@ class Member extends Authenticable implements JWTSubject
         );
     }
 
+    public function deposit()
+    {
+        return $this->hasMany(Deposit::class, 'member_id');
+    }
+
+    public function latestCutOff()
+    {
+        return $this->hasOne(DepositCutOff::class, 'member_id')->latest('id');
+    }
 
     public function createdAt(): Attribute
     {

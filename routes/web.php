@@ -9,6 +9,7 @@ use App\Http\Controllers\DepositController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MemberController;
+use App\Http\Controllers\MemberReportController;
 use App\Http\Controllers\MemberTemplateController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\OrderController;
@@ -88,6 +89,11 @@ Route::middleware('xss')->group(function () {
             // Route::post('/import', [MemberTemplateController::class, 'import'])->name('member.import');
             // Route::get('/template', [MemberTemplateController::class, 'template'])->name('member.template');
 
+            Route::prefix('report')->group(function () {
+                Route::get('/', [MemberReportController::class, 'index'])->name('member.report.index');
+                Route::post('/ajax', [MemberReportController::class, 'ajax'])->name('member.report.ajax');
+            });
+
             Route::get('/deposit/{member}/member', [DepositController::class, 'index'])->name('deposit.index');
             Route::post('/deposit-ajax', [DepositController::class, 'ajax'])->name('deposit.ajax');
             Route::post('/deposit', [DepositController::class, 'store'])->name('deposit.store');
@@ -141,7 +147,7 @@ Route::middleware('xss')->group(function () {
     // ----------- end administrator
 
     // frontend
-    require __DIR__ . '/customer.php';
+    // require __DIR__ . '/customer.php';
 
     // Master ajax
     Route::prefix('master')->group(function () {

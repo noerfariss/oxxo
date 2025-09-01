@@ -42,7 +42,8 @@ class RoleController extends Controller implements HasMiddleware
             ->when($cari, function ($e, $cari) {
                 $e->where('name', 'like', '%' . $cari . '%');
             })
-            ->where('id', '<>', 1);
+            // ->where('id', '<>', 1)
+            ;
 
         return DataTables::eloquent($data)
             ->addColumn('aksi', function ($e) {

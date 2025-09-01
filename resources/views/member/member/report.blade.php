@@ -2,13 +2,13 @@
 
 @section('konten')
     <div class="container-xxl flex-grow-1 container-p-y">
-         <div class="row">
+        <div class="row">
             <div class="col-sm-12">
                 <x-member.report-navigation />
             </div>
         </div>
         <div class="card mb-4">
-            <h5 class="card-header">customer
+            <h5 class="card-header">Report Saldo
                 {!! statusBtn() !!}
             </h5>
 
@@ -32,25 +32,7 @@
                         <input type="text" id="cari" class="form-control" placeholder="Cari...">
                     </div>
                     <div class="col-sm-3 mt-2">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input member-filter" type="checkbox" id="filterMember" value="1">
-                            <label class="form-check-label" for="filterMember">Member</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input member-filter" type="checkbox" id="filterNonMember"
-                                value="0">
-                            <label class="form-check-label" for="filterNonMember">Non Member</label>
-                        </div>
 
-                    </div>
-                    <div class="col-sm-6 mt-2">
-                        @haspermission('MEMBER_CREATE')
-                            <div class="d-flex justify-content-end gap-3">
-                                <a href="{{ route('member.create') }}" class="btn btn-sm btn-outline-primary">
-                                    <i class='bx bx-plus'></i> tambah
-                                </a>
-                            </div>
-                        @endhaspermission
                     </div>
                 </div>
 
@@ -64,35 +46,10 @@
                         <th>tanggal lahir</th>
                         <th>alamat</th>
                         <th>status</th>
-                        <th>dibuat</th>
-
+                        <th>saldo</th>
                     </tr>
                 </thead>
             </table>
-        </div>
-    </div>
-
-    {{-- Modal import --}}
-    <div class="modal fade" id="modalImport" tabindex="-1" aria-labelledby="modalImportLabel" aria-hidden="true">
-        <div class="modal-dialog modal-sm">
-            <form action="" method="POST" enctype="multipart/form-data">
-                @csrf
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalImportLabel">Import Karyawan</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body" id="modalImportBody">
-                        <input type="file" class="form-control" id="file" name="file">
-                    </div>
-                    <div class="modal-footer d-flex justify-content-between">
-                        <a href="" class="btn btn-outline-danger btn-sm">
-                            Download template
-                        </a>
-                        <button type="submit" class="btn btn-primary btn-sm">Import</button>
-                    </div>
-                </div>
-            </form>
         </div>
     </div>
 
@@ -120,19 +77,12 @@
                 [5, 'desc']
             ],
             ajax: {
-                url: "{{ route('member.ajax') }}",
+                url: "{{ route('member.report.ajax') }}",
                 type: "POST",
                 data: function(d) {
                     d._token = $("input[name=_token]").val();
                     d.status = $('.btn-check:checked').val();
                     d.cari = $('#cari').val();
-                    d.office = $('#office_filter').val();
-                    d.division = $('#division_filter').val();
-                    d.position = $('#position_filter').val();
-                    // kirim array filter checkbox
-                    d.member_filter = $('.member-filter:checked').map(function() {
-                        return $(this).val();
-                    }).get();
                 },
             },
             columns: [{
@@ -156,7 +106,10 @@
                     name: 'status'
                 },
                 {
-                    data: 'created_at'
+                    data: 'lastest_saldo',
+                    render: function(data) {
+                        return 'Rp ' + data;
+                    }
                 },
             ]
         });
@@ -164,11 +117,6 @@
         $('#cari').keyup(function() {
             datatables.search($('#cari').val()).draw();
         });
-
-        $('.member-filter').change(function() {
-            datatables.ajax.reload();
-        });
-
 
         $('#datatable tbody').on('click', 'tr td:not(:last-child)', function() {
             const data = datatables.row(this).data();

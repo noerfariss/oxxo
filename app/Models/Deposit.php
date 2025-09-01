@@ -12,19 +12,24 @@ class Deposit extends Model
 {
     protected $guarded = [];
 
-    protected $appends = ['typestring'];
+    protected $appends = ['typestring', 'amountstring'];
 
     public function getTypeStringAttribute()
     {
         return DepositEnum::from((int) $this->type)->label();
     }
 
-    public function amount(): Attribute
+    public function getAmountStringAttribute()
     {
-        return Attribute::make(
-            get: fn($value) => number_format($value, 2),
-        );
+        return number_format($this->amount, 2);
     }
+
+    // public function amount(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn($value) => number_format($value, 2),
+    //     );
+    // }
 
     public function createdAt(): Attribute
     {

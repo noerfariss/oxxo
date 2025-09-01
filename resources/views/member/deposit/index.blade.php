@@ -208,7 +208,11 @@
                     data: 'typestring',
                 },
                 {
-                    data: 'amount',
+                    data: 'amountstring',
+                    name: 'amount',
+                    render: function(data) {
+                        return 'Rp ' + data;
+                    }
                 },
                 {
                     data: 'note',
