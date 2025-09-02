@@ -13,12 +13,12 @@
 
     <ul class="menu-inner py-1 mt-2">
         <!-- Dashboard -->
-        <li class="menu-item {{ menuAktif(['auth.index']) }}">
+        {{-- <li class="menu-item {{ menuAktif(['auth.index']) }}">
             <a href="{{ route('auth.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-pie-chart"></i>
                 <div data-i18n="Analytics">Dashboard</div>
             </a>
-        </li>
+        </li> --}}
 
         @can('CASHIER_READ')
             <li class="menu-item {{ menuAktif(['cashier.index']) }}">
