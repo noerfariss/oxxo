@@ -179,22 +179,55 @@
         $(document).ready(function() {
             $('input[name="ordertype"]').change(function() {
                 let isPickup = $('#out').is(':checked');
-                let isNewOrDone = $('#new').is(':checked') || $('#done').is(':checked');
+                let isNew = $('#new').is(':checked');
+                let isDone = $('#done').is(':checked');
 
                 if (isPickup) {
+                    // disable new & done + outstanding
                     $('#new, #done').prop('disabled', true);
                     $('#outstanding').prop('disabled', true).removeAttr('checked');
-                } else if (isNewOrDone) {
+
+                    // set labelreport ke pickup
+                    $('#labelreport').val('out').trigger('change');
+
+                } else if (isNew || isDone) {
+                    // disable pickup
                     $('#out').prop('disabled', true);
                     $('#outstanding').prop('disabled', false).prop('checked', true);
+
+                    // kalau new dipilih → labelreport ke new
+                    if (isNew) {
+                        $('#labelreport').val('new').trigger('change');
+                    }
+
+                    // kalau done dipilih → labelreport ke done
+                    if (isDone) {
+                        $('#labelreport').val('done').trigger('change');
+                    }
+
                 } else {
                     // reset kalau semua unchecked
                     $('#new, #done, #out').prop('disabled', false);
                     $('#outstanding').prop('disabled', false).prop('checked', true);
+
+                    // reset labelreport ke custom
+                    $('#labelreport').val('');
+                    $('#labelreporttext').val('');
                 }
+
+                // isi text otomatis sesuai option yang dipilih
+                let selected = $('#labelreport option:selected').data('text') || '';
+                $('#labelreporttext').val(selected);
+            });
+
+            // kalau user ubah dropdown manual
+            $('#labelreport').change(function() {
+                let text = $(this).find(':selected').data('text') || '';
+                $('#labelreporttext').val(text);
             });
         });
     </script>
+
 
 
     <script>
