@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="card mb-4">
-            <h5 class="card-header">done (barang selesai)</h5>
+            <h5 class="card-header">Report</h5>
 
             <div class="card-body">
                 @if (session()->has('pesan'))
@@ -28,25 +28,92 @@
                 <div class="row">
                     <div class="col-sm-3 mt-2">
                         <input type="text" class="form-control" id="tanggal">
+                        <div class="mt-2">
+                            <label class="form-label fw-bold">Order Type</label>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ordertype" value="new" checked
+                                    id="new">
+                                <label class="form-check-label" for="new">
+                                    Drop Off (Barang Masuk)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ordertype" value="done"
+                                    id="done">
+                                <label class="form-check-label" for="done">
+                                    Done (Barang Selesai)
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="ordertype" value="out" disabled
+                                    id="out">
+                                <label class="form-check-label" for="out">
+                                    Pickup (Barang Keluar)
+                                </label>
+                            </div>
+                        </div>
                     </div>
                     <div class="col-sm-3 mt-2">
                         <input type="text" id="cari" class="form-control" placeholder="Cari...">
-                        {{-- <div class="mt-2">
-                            <label class="form-label fw-bold">Pembayaran</label>
+                        <div class="mt-2">
+                            <label class="form-label fw-bold">Payment</label>
                             <div class="form-check">
-                                <input class="form-check-input" type="checkbox" name="paymentoutstanding"
-                                    value="is_outstanding" id="is_outstanding">
-                                <label class="form-check-label" for="is_outstanding">
-                                    Include Outstanding
+                                <input class="form-check-input" type="checkbox" name="paymenttype" value="outstanding"
+                                    checked id="outstanding">
+                                <label class="form-check-label" for="outstanding">
+                                    Outstanding
                                 </label>
                             </div>
-                        </div> --}}
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="paymenttype" value="ppc" checked
+                                    id="ppc">
+                                <label class="form-check-label" for="ppc">
+                                    PPC
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="paymenttype" value="cash" checked
+                                    id="cash">
+                                <label class="form-check-label" for="cash">
+                                    Cash
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" name="paymenttype" value="card" checked
+                                    id="card">
+                                <label class="form-check-label" for="card">
+                                    Card
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-2 mt-2">
+                        <button onclick="datatables.ajax.reload()" class="btn btn-primary btn-sm">GO</button>
+                        <button id="btnReport" class="btn btn-success btn-sm">Report</button>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-6">
+                        <label class="form-label fw-bold">Label Report</label>
+                        <div class="row">
+                            <div class="col-sm-6">
+                                <select class="form-control" name="labelreport" id="labelreport">
+                                    <option value="">-- Custom ---</option>
+                                    <option value="new" data-text="Drop Off (Barang Masuk)">Drop Off (Barang Masuk)
+                                    </option>
+                                    <option value="done" data-text="Done (Barang Selesai)">Done (Barang Selesai)</option>
+                                    <option value="out" data-text="Pickup (Barang Selesai)">Pickup (Barang Selesai)
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="text" class="form-control" name="labelreporttext" id="labelreporttext"
+                                    placeholder="Buat label report">
+                            </div>
+                        </div>
 
                     </div>
-                    {{-- <div class="col-sm-2 mt-2">
-                        <button id="btnReport" class="btn btn-success btn-sm">Report Stock Opname</button>
-                    </div> --}}
-
                 </div>
             </div>
 
@@ -70,38 +137,6 @@
     @include('member.layouts.modalDetailTable', [
         'size' => 'lg',
     ])
-
-    <div class="modal fade" id="modalPaymentIfOutStanding" tabindex="-1" aria-labelledby="modalPaymentIfOutStandingLabel"
-        aria-hidden="true">
-        <div class="modal-dialog modal-xs">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalPaymentIfOutStandingLabel">Pelunasan</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body" id="modalPaymentIfOutStandingBody">
-                    <h6>Pilih Metode Pembayaran</h6>
-
-                    <div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input payment-filter" name="paymenttype" type="radio" id="cash"
-                                value="cash">
-                            <label class="form-check-label" for="cash">Cash</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input payment-filter" name="paymenttype" type="radio" id="card"
-                                value="card">
-                            <label class="form-check-label" for="card">Card</label>
-                        </div>
-                    </div>
-
-                    <button type="button" class="btn btn-sm btn-primary mt-5 w-100" id="submitPaymentIfOutStanding">Proses
-                        Pickup</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
 @endsection
 
 @push('script')
@@ -120,9 +155,47 @@
             onClose: function() {
                 $('#tanggal').blur();
                 datatables.ajax.reload();
+            },
+        });
+    </script>
+
+    <script>
+        $('#labelreport').change(function() {
+            let selected = $(this).find(':selected');
+            let val = selected.val();
+            let text = selected.data('text');
+
+            if (val === "") {
+                // Custom → kosongkan input & bisa diisi manual
+                $('#labelreporttext').val('').prop('readonly', false);
+            } else {
+                // Isi otomatis dari data-text & readonly
+                $('#labelreporttext').val(text).prop('readonly', true);
             }
         });
     </script>
+
+    <script>
+        $(document).ready(function() {
+            $('input[name="ordertype"]').change(function() {
+                let isPickup = $('#out').is(':checked');
+                let isNewOrDone = $('#new').is(':checked') || $('#done').is(':checked');
+
+                if (isPickup) {
+                    $('#new, #done').prop('disabled', true);
+                    $('#outstanding').prop('disabled', true).removeAttr('checked');
+                } else if (isNewOrDone) {
+                    $('#out').prop('disabled', true);
+                    $('#outstanding').prop('disabled', false).prop('checked', true);
+                } else {
+                    // reset kalau semua unchecked
+                    $('#new, #done, #out').prop('disabled', false);
+                    $('#outstanding').prop('disabled', false).prop('checked', true);
+                }
+            });
+        });
+    </script>
+
 
     <script>
         var datatables = $('#datatable').DataTable({
@@ -139,17 +212,32 @@
                 [5, 'desc']
             ],
             ajax: {
-                url: "{{ route('order.ajax') }}",
+                url: "{{ route('order.report.ajax') }}",
                 type: "POST",
                 data: function(d) {
                     d._token = $("input[name=_token]").val();
+
+                    // text input
                     d.cari = $('#cari').val();
-                    d.type = 'done';
                     d.dates = $('#tanggal').val();
+
+                    // ordertype (checkbox)
+                    d.ordertype = $('input[name="ordertype"]:checked').map(function() {
+                        return this.value;
+                    }).get();
+
+                    // paymenttype (checkbox)
+                    d.paymenttype = $('input[name="paymenttype"]:checked').map(function() {
+                        return this.value;
+                    }).get();
+
+                    // label report (select + text)
+                    d.labelreport = $('#labelreport').val();
+                    d.labelreporttext = $('#labelreporttext').val();
                 },
             },
             columns: [{
-                    data: 'numberid'
+                    data: 'idstatus'
                 },
                 {
                     data: 'memberstring',
@@ -186,7 +274,7 @@
             const data = datatables.row(this).data();
 
             $('#modalDetailTable').modal('show');
-            $('#modalDetailTableLabel').text('Pickup (Barang Keluar)');
+            $('#modalDetailTableLabel').text('Report');
 
             let dataTable = `
             <table class="table table-sm table-hover">
@@ -194,7 +282,7 @@
                     <tr>
                         <td class="col-form-label">Bill ID</td>
                         <td>:</td>
-                        <td>${data.numberid}</td>
+                        <td>${data.idstatus}</td>
                     </tr>
                     <tr>
                         <td class="col-form-label">customer</td>
@@ -224,10 +312,7 @@
                     <tr>
                         <td class="col-form-label">pembayaran</td>
                         <td>:</td>
-                        <td>
-                            ${data.payment_method.toUpperCase()}
-                            <input type="hidden" id="paymentStatus" value="${data.payment_method}"/>
-                        </td>
+                        <td>${data.payment_method.toUpperCase()}</td>
                     </tr>
                     <tr>
                         <td class="col-form-label">dibuat</td>
@@ -294,108 +379,9 @@
                     </tr>
                     </tbody>
                 </table>
-
-                <div class="text-end mt-3 d-flex justify-content-end gap-2">
-                     <form id="prosesBarangPickup" method="POST">
-                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-sm btn-primary">Pickup</button>
-                    </form>
-
-                    <a id="btnPrintInvoice" href="#" target="_blank" class="btn btn-sm btn-secondary">Print Invoice</a>
-                </div>
             `;
 
-
             $('#modalDetailTableBody').html(dataTable);
-
-            $('#btnPrintInvoice').attr('href', `/auth/order/${data.id}/print`);
-
-            $('#prosesBarangPickup').attr('action', `{{ url('auth/order') }}/${data.id}/keluar`);
-            $(document).on('submit', '#prosesBarangPickup', function(e) {
-                e.preventDefault();
-
-                const paymentStatus = $('#paymentStatus').val();
-                if (paymentStatus === 'outstanding') {
-                    $('#modalPaymentIfOutStanding').modal('show');
-
-                    $('#submitPaymentIfOutStanding').click(function(e) {
-                        let paymentinput = $('.payment-filter:checked').val();
-                        e.preventDefault();
-
-                        Swal.fire({
-                            title: "Ingin memproses data ini?",
-                            showDenyButton: false,
-                            showCancelButton: true,
-                            confirmButtonText: "Ya Lanjutkan!",
-                            denyButtonText: `Batal`
-                        }).then((result) => {
-                            /* Read more about isConfirmed, isDenied below */
-                            if (result.isConfirmed) {
-                                $.ajax({
-                                    url: $('#prosesBarangPickup').attr('action'),
-                                    type: 'POST',
-                                    data: {
-                                        _token: $('input[name="_token"]').val(),
-                                        payment: paymentinput
-                                    },
-                                    success: function(res) {
-                                        Swal.fire({
-                                            title: "Data berhasil diproses",
-                                            icon: "success",
-                                            draggable: true
-                                        });
-
-                                        $('#modalDetailTable').modal('hide');
-                                        $('#modalPaymentIfOutStanding').modal(
-                                            'hide');
-                                        datatables.ajax
-                                            .reload(); // reload tabel agar status terbaru muncul
-                                    },
-                                    error: function(err) {
-                                        alert('Gagal memproses order!');
-                                        console.error(err);
-                                    }
-                                });
-                            }
-                        });
-                    })
-
-
-                } else {
-                    Swal.fire({
-                        title: "Ingin memproses data ini?",
-                        showDenyButton: false,
-                        showCancelButton: true,
-                        confirmButtonText: "Ya Lanjutkan!",
-                        denyButtonText: `Batal`
-                    }).then((result) => {
-                        /* Read more about isConfirmed, isDenied below */
-                        if (result.isConfirmed) {
-                            $.ajax({
-                                url: $(this).attr('action'),
-                                type: 'POST',
-                                data: $(this).serialize(),
-                                success: function(res) {
-                                    Swal.fire({
-                                        title: "Data berhasil diproses",
-                                        icon: "success",
-                                        draggable: true
-                                    });
-
-                                    $('#modalDetailTable').modal('hide');
-                                    datatables.ajax
-                                        .reload(); // reload tabel agar status terbaru muncul
-                                },
-                                error: function(err) {
-                                    alert('Gagal memproses order!');
-                                    console.error(err);
-                                }
-                            });
-                        }
-                    });
-                }
-            });
-
         });
     </script>
 
@@ -407,13 +393,27 @@
                 return;
             }
 
-            let isOutstanding = $('#is_outstanding').is(':checked') ? 1 : 0;
+            // Ambil semua filter
+            let ordertype = $('input[name="ordertype"]:checked').map(function() {
+                return this.value;
+            }).get();
 
-            // Redirect ke route report dengan parameter tanggal (GET)
+            let paymenttype = $('input[name="paymenttype"]:checked').map(function() {
+                return this.value;
+            }).get();
+
+            let labelreport = $('#labelreport').val();
+            let labelreporttext = $('#labelreporttext').val();
+            let cari = $('#cari').val();
+
+            // Susun URL
             let url = "{{ route('order.report') }}" +
                 "?tanggal=" + encodeURIComponent(tanggal) +
-                "&type=done" +
-                "&is_outstanding=" + isOutstanding;
+                "&ordertype=" + encodeURIComponent(JSON.stringify(ordertype)) +
+                "&paymenttype=" + encodeURIComponent(JSON.stringify(paymenttype)) +
+                "&labelreport=" + encodeURIComponent(labelreport) +
+                "&labelreporttext=" + encodeURIComponent(labelreporttext) +
+                "&cari=" + encodeURIComponent(cari);
 
             window.open(url, '_blank');
         });

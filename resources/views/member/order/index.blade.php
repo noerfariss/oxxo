@@ -32,9 +32,9 @@
                     <div class="col-sm-3 mt-2">
                         <input type="text" id="cari" class="form-control" placeholder="Cari...">
                     </div>
-                    <div class="col-sm-2 mt-2">
+                    {{-- <div class="col-sm-2 mt-2">
                         <button id="btnReport" class="btn btn-success btn-sm">Report</button>
-                    </div>
+                    </div> --}}
 
                 </div>
             </div>

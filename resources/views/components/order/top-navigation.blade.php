@@ -14,4 +14,9 @@
             href="{{ route('order.out') }}">Pickup (Barang Keluar)</a>
     </li>
 
+    <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('order.report.index') ? 'active' : '' }}" aria-current="page"
+            href="{{ route('order.report.index') }}">Report</a>
+    </li>
+
 </ul>
