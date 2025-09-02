@@ -13,6 +13,7 @@ use App\Http\Controllers\MemberReportController;
 use App\Http\Controllers\MemberTemplateController;
 use App\Http\Controllers\OfficeController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderDoneController;
 use App\Http\Controllers\OrderInController;
 use App\Http\Controllers\OrderOutController;
 use App\Http\Controllers\OutletKiosController;
@@ -56,18 +57,22 @@ Route::middleware('xss')->group(function () {
         Route::prefix('order')->name('order.')->group(function () {
             Route::get('/', [OrderController::class, 'index'])->name('index');
             Route::post('/order-ajax', [OrderController::class, 'ajax'])->name('ajax');
-            Route::post('/{id}/keluar', [OrderController::class, 'prosesKeluar'])->name('keluar');
-            Route::get('/report', [OrderController::class, 'report'])->name('report');
-            Route::get('/{id}/print', [OrderController::class, 'print'])->name('print');
+
+            Route::get('/done', [OrderDoneController::class, 'index'])->name('done');
+            Route::post('/{id}/done', [OrderDoneController::class, 'prosesDone'])->name('process.done');
 
             Route::get('/out', [OrderOutController::class, 'index'])->name('out');
+            Route::post('/{id}/keluar', [OrderOutController::class, 'prosesKeluar'])->name('keluar');
+
+            Route::get('/report', [OrderController::class, 'report'])->name('report');
+            Route::get('/{id}/print', [OrderController::class, 'print'])->name('print');
             // Route::post('/orderout-ajax', [OrderOutController::class, 'ajax'])->name('outajax');
             // Route::post('/{id}/masuk', [OrderOutController::class, 'prosesIn'])->name('masuk');
             // Route::get('/outreport', [OrderOutController::class, 'report'])->name('outreport');
 
-            Route::get('/in', [OrderInController::class, 'index'])->name('in');
-            Route::post('/orderin-ajax', [OrderInController::class, 'ajax'])->name('inajax');
-            Route::get('/inreport', [OrderInController::class, 'report'])->name('inreport');
+            // Route::get('/in', [OrderInController::class, 'index'])->name('in');
+            // Route::post('/orderin-ajax', [OrderInController::class, 'ajax'])->name('inajax');
+            // Route::get('/inreport', [OrderInController::class, 'report'])->name('inreport');
         });
 
         Route::prefix('cashier')->group(function () {

@@ -8,7 +8,7 @@
             </div>
         </div>
         <div class="card mb-4">
-            <h5 class="card-header">pickup</h5>
+            <h5 class="card-header">done (barang selesai)</h5>
 
             <div class="card-body">
                 @if (session()->has('pesan'))
@@ -31,9 +31,14 @@
                     </div>
                     <div class="col-sm-3 mt-2">
                         <input type="text" id="cari" class="form-control" placeholder="Cari...">
+
+                        <div class="d-flex aling-items-center gap-2 mt-2">
+                            <input type="checkbox" name="paymentoutstanding" value="is_outstanding" id="is_outstanding">
+                            <label for="is_outstanding">Include Outstanding</label>
+                        </div>
                     </div>
                     <div class="col-sm-2 mt-2">
-                        <button id="btnReport" class="btn btn-success btn-sm">Report</button>
+                        <button id="btnReport" class="btn btn-success btn-sm">Report Stock Opname</button>
                     </div>
 
                 </div>
@@ -59,6 +64,38 @@
     @include('member.layouts.modalDetailTable', [
         'size' => 'lg',
     ])
+
+    <div class="modal fade" id="modalPaymentIfOutStanding" tabindex="-1" aria-labelledby="modalPaymentIfOutStandingLabel"
+        aria-hidden="true">
+        <div class="modal-dialog modal-xs">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalPaymentIfOutStandingLabel">Pelunasan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="modalPaymentIfOutStandingBody">
+                    <h6>Pilih Metode Pembayaran</h6>
+
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input payment-filter" name="paymenttype" type="radio" id="cash"
+                                value="cash">
+                            <label class="form-check-label" for="cash">Cash</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input payment-filter" name="paymenttype" type="radio" id="card"
+                                value="card">
+                            <label class="form-check-label" for="card">Card</label>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-sm btn-primary mt-5 w-100" id="submitPaymentIfOutStanding">Proses
+                        Pickup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @endsection
 
 @push('script')
@@ -101,7 +138,7 @@
                 data: function(d) {
                     d._token = $("input[name=_token]").val();
                     d.cari = $('#cari').val();
-                    d.type = 'out';
+                    d.type = 'done';
                     d.dates = $('#tanggal').val();
                 },
             },
@@ -181,7 +218,10 @@
                     <tr>
                         <td class="col-form-label">pembayaran</td>
                         <td>:</td>
-                        <td>${data.payment_method.toUpperCase()}</td>
+                        <td>
+                            ${data.payment_method.toUpperCase()}
+                            <input type="hidden" id="paymentStatus" value="${data.payment_method}"/>
+                        </td>
                     </tr>
                     <tr>
                         <td class="col-form-label">dibuat</td>
@@ -249,8 +289,13 @@
                     </tbody>
                 </table>
 
-                 <div class="text-end mt-3 d-flex justify-content-end gap-2">
-                                     <a id="btnPrintInvoice" href="#" target="_blank" class="btn btn-sm btn-secondary">Print Invoice</a>
+                <div class="text-end mt-3 d-flex justify-content-end gap-2">
+                     <form id="prosesBarangPickup" method="POST">
+                        <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="btn btn-sm btn-primary">Pickup</button>
+                    </form>
+
+                    <a id="btnPrintInvoice" href="#" target="_blank" class="btn btn-sm btn-secondary">Print Invoice</a>
                 </div>
             `;
 
@@ -259,26 +304,90 @@
 
             $('#btnPrintInvoice').attr('href', `/auth/order/${data.id}/print`);
 
-            $('#formProsesKeluar').attr('action', `{{ url('auth/order') }}/${data.id}/keluar`);
-            $(document).on('submit', '#formProsesKeluar', function(e) {
+            $('#prosesBarangPickup').attr('action', `{{ url('auth/order') }}/${data.id}/keluar`);
+            $(document).on('submit', '#prosesBarangPickup', function(e) {
                 e.preventDefault();
 
-                if (!confirm('Yakin proses barang keluar?')) return;
+                const paymentStatus = $('#paymentStatus').val();
+                if (paymentStatus === 'outstanding') {
+                    $('#modalPaymentIfOutStanding').modal('show');
 
-                $.ajax({
-                    url: $(this).attr('action'),
-                    type: 'POST',
-                    data: $(this).serialize(),
-                    success: function(res) {
-                        alert('Order berhasil diproses!');
-                        $('#modalDetailTable').modal('hide');
-                        datatables.ajax.reload(); // reload tabel agar status terbaru muncul
-                    },
-                    error: function(err) {
-                        alert('Gagal memproses order!');
-                        console.error(err);
-                    }
-                });
+                    $('#submitPaymentIfOutStanding').click(function(e) {
+                        let paymentinput = $('.payment-filter:checked').val();
+                        e.preventDefault();
+
+                        Swal.fire({
+                            title: "Ingin memproses data ini?",
+                            showDenyButton: false,
+                            showCancelButton: true,
+                            confirmButtonText: "Ya Lanjutkan!",
+                            denyButtonText: `Batal`
+                        }).then((result) => {
+                            /* Read more about isConfirmed, isDenied below */
+                            if (result.isConfirmed) {
+                                $.ajax({
+                                    url: $('#prosesBarangPickup').attr('action'),
+                                    type: 'POST',
+                                    data: {
+                                        _token: $('input[name="_token"]').val(),
+                                        payment: paymentinput
+                                    },
+                                    success: function(res) {
+                                        Swal.fire({
+                                            title: "Data berhasil diproses",
+                                            icon: "success",
+                                            draggable: true
+                                        });
+
+                                        $('#modalDetailTable').modal('hide');
+                                        $('#modalPaymentIfOutStanding').modal(
+                                            'hide');
+                                        datatables.ajax
+                                            .reload(); // reload tabel agar status terbaru muncul
+                                    },
+                                    error: function(err) {
+                                        alert('Gagal memproses order!');
+                                        console.error(err);
+                                    }
+                                });
+                            }
+                        });
+                    })
+
+
+                } else {
+                    Swal.fire({
+                        title: "Ingin memproses data ini?",
+                        showDenyButton: false,
+                        showCancelButton: true,
+                        confirmButtonText: "Ya Lanjutkan!",
+                        denyButtonText: `Batal`
+                    }).then((result) => {
+                        /* Read more about isConfirmed, isDenied below */
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: $(this).attr('action'),
+                                type: 'POST',
+                                data: $(this).serialize(),
+                                success: function(res) {
+                                    Swal.fire({
+                                        title: "Data berhasil diproses",
+                                        icon: "success",
+                                        draggable: true
+                                    });
+
+                                    $('#modalDetailTable').modal('hide');
+                                    datatables.ajax
+                                        .reload(); // reload tabel agar status terbaru muncul
+                                },
+                                error: function(err) {
+                                    alert('Gagal memproses order!');
+                                    console.error(err);
+                                }
+                            });
+                        }
+                    });
+                }
             });
 
         });
@@ -291,9 +400,16 @@
                 alert('Silakan pilih tanggal terlebih dahulu.');
                 return;
             }
+
+            let isOutstanding = $('#is_outstanding').is(':checked') ? 1 : 0;
+
             // Redirect ke route report dengan parameter tanggal (GET)
-            window.open("{{ route('order.report') }}?tanggal=" + encodeURIComponent(tanggal) + "&type=out",
-                '_blank');
+            let url = "{{ route('order.report') }}" +
+                "?tanggal=" + encodeURIComponent(tanggal) +
+                "&type=done" +
+                "&is_outstanding=" + isOutstanding;
+
+            window.open(url, '_blank');
         });
     </script>
 @endpush

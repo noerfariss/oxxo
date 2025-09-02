@@ -101,6 +101,7 @@
                 data: function(d) {
                     d._token = $("input[name=_token]").val();
                     d.cari = $('#cari').val();
+                    d.type = 'new';
                     d.dates = $('#tanggal').val();
                 },
             },
@@ -140,8 +141,6 @@
 
         $('#datatable tbody').on('click', 'tr td', function() {
             const data = datatables.row(this).data();
-
-            console.log(data);
 
             $('#modalDetailTable').modal('show');
             $('#modalDetailTableLabel').text('Data Order');
@@ -251,9 +250,9 @@
                 </table>
 
                  <div class="text-end mt-3 d-flex justify-content-end gap-2">
-                    <form id="formProsesKeluar" method="POST">
+                    <form id="prosesBarangDone" method="POST">
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-sm btn-primary">Proses barang keluar</button>
+                        <button type="submit" class="btn btn-sm btn-primary">Done</button>
                     </form>
 
                     <a id="btnPrintInvoice" href="#" target="_blank" class="btn btn-sm btn-secondary">Print Invoice</a>
@@ -265,8 +264,8 @@
 
             $('#btnPrintInvoice').attr('href', `/auth/order/${data.id}/print`);
 
-            $('#formProsesKeluar').attr('action', `{{ url('auth/order') }}/${data.id}/keluar`);
-            $(document).on('submit', '#formProsesKeluar', function(e) {
+            $('#prosesBarangDone').attr('action', `{{ url('auth/order') }}/${data.id}/done`);
+            $(document).on('submit', '#prosesBarangDone', function(e) {
                 e.preventDefault();
 
                 Swal.fire({
@@ -313,7 +312,7 @@
                 return;
             }
             // Redirect ke route report dengan parameter tanggal (GET)
-            window.open("{{ route('order.report') }}?tanggal=" + encodeURIComponent(tanggal) + "&type=in",
+            window.open("{{ route('order.report') }}?tanggal=" + encodeURIComponent(tanggal) + "&type=new",
                 '_blank');
         });
     </script>

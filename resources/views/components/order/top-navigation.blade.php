@@ -5,6 +5,11 @@
     </li>
 
     <li class="nav-item">
+        <a class="nav-link {{ request()->routeIs('order.done') ? 'active' : '' }}" aria-current="page"
+            href="{{ route('order.done') }}">Done (Barang Selesai)</a>
+    </li>
+
+    <li class="nav-item">
         <a class="nav-link {{ request()->routeIs('order.out') ? 'active' : '' }}" aria-current="page"
             href="{{ route('order.out') }}">Pickup (Barang Keluar)</a>
     </li>

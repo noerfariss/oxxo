@@ -9,27 +9,21 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 
-class OrderOutController extends Controller
+class OrderDoneController extends Controller
 {
     public function index()
     {
-        return view('member.order.orderout');
+        return view('member.order.orderdone');
     }
 
-    public function prosesKeluar(Request $request, $id)
+    public function prosesDone($id)
     {
-        $payment = $request->payment;
         $order = Order::findOrFail($id);
-        $order->status = OrderEnum::OUT->value;
-        $order->orderpickup = Carbon::now();
-
-        if ($payment) {
-            $order->payment_method  = $payment;
-        }
-
+        $order->status = OrderEnum::DONE->value;
+        $order->orderdone = Carbon::now();
         $order->save();
 
-        return back()->with('pesan', '<div class="alert alert-success">Order berhasil diproses menjadi keluar.</div>');
+        return back()->with('pesan', '<div class="alert alert-success">Order berhasil diproses menjadi Done.</div>');
     }
 
     // public function ajax(Request $request)
