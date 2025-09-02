@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\OrderEnum;
+use App\Exports\OrderReportExport;
 use App\Models\Order;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class OrderReportController extends Controller
@@ -211,6 +213,15 @@ class OrderReportController extends Controller
 
         // Tentukan judul report
         $title = $request->labelreporttext ?: "Report Order";
+
+        // Pilih format
+        if ($request->format === 'excel') {
+            return Excel::download(
+                new OrderReportExport($orders, $totalPayment, $dates, $numClients, $numPcs, $grandTotal, $title, $ordertype),
+                "report_order_{$dates[0]}_{$dates[1]}.xlsx"
+            );
+        }
+
 
         // Generate PDF
         $pdf = Pdf::loadView('member.order.reportpdf', [

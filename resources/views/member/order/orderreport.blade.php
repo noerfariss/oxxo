@@ -88,16 +88,15 @@
                         </div>
                     </div>
                     <div class="col-sm-2 mt-2">
-                        <button onclick="datatables.ajax.reload()" class="btn btn-primary btn-sm">GO</button>
-                        <button id="btnReport" class="btn btn-success btn-sm">Report</button>
+                        <button onclick="datatables.ajax.reload()" class="btn btn-primary btn-sm">Refresh</button>
                     </div>
                 </div>
 
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <label class="form-label fw-bold">Label Report</label>
                         <div class="row">
-                            <div class="col-sm-6">
+                            <div class="col-sm-3">
                                 <select class="form-control" name="labelreport" id="labelreport">
                                     <option value="">-- Custom ---</option>
                                     <option value="new" data-text="Drop Off (Barang Masuk)">Drop Off (Barang Masuk)
@@ -107,10 +106,15 @@
                                     </option>
                                 </select>
                             </div>
-                            <div class="col-sm-6">
+                            <div class="col-sm-3">
                                 <input type="text" class="form-control" name="labelreporttext" id="labelreporttext"
                                     placeholder="Buat label report">
                             </div>
+                            <div class="col-sm-2">
+                                <button class="btn btn-danger btn-sm btnReport" data-format="pdf">PDF</button>
+                                <button class="btn btn-success btn-sm btnReport" data-format="excel">Excel</button>
+                            </div>
+
                         </div>
 
                     </div>
@@ -419,8 +423,10 @@
     </script>
 
     <script>
-        $('#btnReport').click(function() {
+        $('.btnReport').click(function() {
+            let format = $(this).data('format'); // baca pdf / excel
             let tanggal = $('#tanggal').val();
+
             if (!tanggal) {
                 alert('Silakan pilih tanggal terlebih dahulu.');
                 return;
@@ -446,7 +452,8 @@
                 "&paymenttype=" + encodeURIComponent(JSON.stringify(paymenttype)) +
                 "&labelreport=" + encodeURIComponent(labelreport) +
                 "&labelreporttext=" + encodeURIComponent(labelreporttext) +
-                "&cari=" + encodeURIComponent(cari);
+                "&cari=" + encodeURIComponent(cari) +
+                "&format=" + format; // <---- tambahin format
 
             window.open(url, '_blank');
         });
